@@ -1,6 +1,7 @@
 package com.example.shareeat
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -39,15 +40,15 @@ class SignInFragment : Fragment() {
         binding?.loginButton?.setOnClickListener(::onLoginClicked)
         binding?.registerLink?.setOnClickListener(::onRegisterClicked)
 
+        return binding?.root
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         val currentUser = auth.currentUser
         if (currentUser != null) {
-            // User is already signed in, navigate to main screen
-            /*
-                        view?.let { Navigation.findNavController(it).navigate(R.id.action_signInFragment_to_mainFragment) }
-            */
+            Navigation.findNavController(view).navigate(R.id.action_signInFragment_to_homePageFragment)
         }
-
-        return binding?.root
     }
 
     private fun onLoginClicked(view: View) {
@@ -69,7 +70,7 @@ class SignInFragment : Fragment() {
 
                 if (task.isSuccessful) {
                     Toast.makeText(requireContext(), "Login successful", Toast.LENGTH_SHORT).show()
-//                    Navigation.findNavController(view).navigate(R.id.action_signInFragment_to_mainFragment)
+                    Navigation.findNavController(view).navigate(R.id.action_signInFragment_to_homePageFragment)
                 } else {
                     when (task.exception) {
                         is FirebaseAuthInvalidUserException -> {
