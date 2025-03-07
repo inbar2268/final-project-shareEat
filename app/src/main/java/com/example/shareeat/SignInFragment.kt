@@ -35,7 +35,6 @@ class SignInFragment : Fragment() {
 
         // Set up click listeners
         binding?.loginButton?.setOnClickListener(::onLoginClicked)
-        binding?.forgotPasswordLink?.setOnClickListener(::onForgotPasswordClicked)
         binding?.registerLink?.setOnClickListener(::onRegisterClicked)
 
         return binding?.root

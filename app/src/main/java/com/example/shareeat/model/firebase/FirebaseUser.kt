@@ -1,81 +1,66 @@
 package com.example.shareeat.model.firebase
 
-import android.graphics.Bitmap
 import android.util.Log
-import com.google.firebase.firestore.firestoreSettings
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.memoryCacheSettings
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import com.example.shareeat.base.Constants
-import com.example.shareeat.base.EmptyCallback
 import com.example.shareeat.base.UsersCallback
-import com.example.shareeat.extensions.toFirebaseTimestamp
+import com.example.shareeat.base.EmptyCallback
 import com.example.shareeat.model.User
-import java.io.ByteArrayOutputStream
+import com.example.shareeat.extensions.toFirebaseTimestamp
 
-class FirebaseUser {
-
-    private val database = Firebase.firestore
-    private val storage = Firebase.storage
-
-    init {
-
-        val settings = firestoreSettings {
-            setLocalCacheSettings(memoryCacheSettings {  })
-        }
-        database.firestoreSettings = settings
-    }
+class FirebaseUser(private val firebaseModel: FirebaseModel) {
 
     fun getAllUsers(sinceLastUpdated: Long, callback: UsersCallback) {
-
-        database.collection(Constants.Collections.USERS)
+        firebaseModel.database.collection(Constants.Collections.USERS)
             .whereGreaterThanOrEqualTo(User.LAST_UPDATED, sinceLastUpdated.toFirebaseTimestamp)
             .get()
             .addOnCompleteListener {
-                when (it.isSuccessful) {
-                    true -> {
-                        val students: MutableList<User> = mutableListOf()
-                        for (json in it.result) {
-                            students.add(User.fromJSON(json.data))
-                        }
-                        Log.d("TAG", students.size.toString())
-                        callback(students)
+                if (it.isSuccessful) {
+                    val users: MutableList<User> = mutableListOf()
+                    it.result?.forEach { document ->
+                        users.add(User.fromJSON(document.data))
                     }
-
-                    false -> callback(listOf())
+                    Log.d("FirebaseUser", "Users fetched: ${users.size}")
+                    callback(users)
+                } else {
+                    Log.e("FirebaseUser", "Error fetching users", it.exception)
+                    callback(emptyList())
                 }
             }
     }
 
     fun add(user: User, callback: EmptyCallback) {
-        database.collection(Constants.Collections.USERS).document(user.id).set(user.json)
+        firebaseModel.database.collection(Constants.Collections.USERS)
+            .document(user.id)
+            .set(user.json)
             .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.d("FirebaseUser", "User added: ${user.id}")
+                } else {
+                    Log.e("FirebaseUser", "Error adding user", it.exception)
+                }
                 callback()
             }
-            .addOnFailureListener {
-                Log.d("TAG", it.toString() + it.message)
+            .addOnFailureListener { exception ->
+                Log.e("FirebaseUser", "Error adding user", exception)
+                callback() // Call the callback even on failure, but handle it within the callback
             }
     }
 
     fun delete(user: User, callback: EmptyCallback) {
-
-    }
-
-    fun uploadImage(image: Bitmap, name: String, callback: (String?) -> Unit) {
-        val storageRef = storage.reference
-        val imageRef = storageRef.child("images/$name.jpg")
-        val baos = ByteArrayOutputStream()
-        image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        val data = baos.toByteArray()
-
-        var uploadTask = imageRef.putBytes(data)
-        uploadTask.addOnFailureListener {
-            callback(null)
-        }.addOnSuccessListener { taskSnapshot ->
-            imageRef.downloadUrl.addOnSuccessListener { uri ->
-                callback(uri.toString())
+        firebaseModel.database.collection(Constants.Collections.USERS)
+            .document(user.id)
+            .delete()
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Log.d("FirebaseUser", "User deleted: ${user.id}")
+                } else {
+                    Log.e("FirebaseUser", "Error deleting user", it.exception)
+                }
+                callback()
             }
-        }
+            .addOnFailureListener { exception ->
+                Log.e("FirebaseUser", "Error deleting user", exception)
+                callback() // Call the callback even on failure, but handle it within the callback
+            }
     }
 }

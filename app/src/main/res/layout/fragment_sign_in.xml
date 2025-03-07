@@ -91,19 +91,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordLabel" />
 
-    <!-- Forgot Password Link -->
-    <TextView
-        android:id="@+id/forgotPasswordLink"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="40dp"
-        android:text="forgot your password?"
-        android:textColor="#333333"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passwordInput" />
-
     <!-- Log In Button -->
     <Button
         android:id="@+id/loginButton"
@@ -120,7 +107,7 @@
         android:backgroundTint="@color/peach"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/forgotPasswordLink" />
+        app:layout_constraintTop_toBottomOf="@+id/passwordInput" />
 
     <!-- Register Link -->
     <TextView

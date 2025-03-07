@@ -10,19 +10,16 @@ import com.example.shareeat.model.User
 
 @Dao
 interface UserDao {
-
     @Query("SELECT * FROM User")
-    fun getAllUsers(): List<User>
+    fun getAllUser(): LiveData<List<User>>
 
     @Query("SELECT * FROM User WHERE id =:id")
     fun getUserById(id: String): User
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertUser(vararg users: User)
+    fun insertAll(vararg student: User)
 
-    @Query("DELETE FROM User WHERE id= :id ")
-    fun deleteUser(id: String)
+    @Delete
+    fun delete(student: User)
 
-    @Query("UPDATE User SET firstName= :firstName, lastName= :lastName, email= :email , password= :password ,id= :id  WHERE id= :oldStudentId ")
-    fun updateUser(oldStudentId:String,firstName:String, id:String, lastName:String, email: String, password: String)
 }
