@@ -64,10 +64,8 @@ class SignUpFragment : Fragment() {
             return
         }
 
-        // Show progress bar
         binding?.progressBar?.visibility = View.VISIBLE
 
-        // Create user with email and password
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
