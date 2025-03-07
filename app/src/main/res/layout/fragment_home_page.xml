@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HomePageFragment"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:paddingBottom="0dp">
 
     <TextView
         android:id="@+id/welcomeTitle"
