@@ -77,7 +77,7 @@ class SignInFragment : Fragment() {
 
     private fun onRegisterClicked(view: View) {
         // Navigate to registration screen
-//        Navigation.findNavController(view).navigate(R.id.action_signInFragment_to_registerFragment)
+       Navigation.findNavController(view).navigate(R.id.action_signInFragment_to_signUpFragment)
     }
 
     override fun onDestroyView() {

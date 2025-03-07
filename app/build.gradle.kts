@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId = "com.example.shareeat"
         minSdk = 29
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.firebase.storage)
     implementation(libs.picasso)
     implementation(libs.cloudinary.android)
+    implementation(libs.firebase.auth.ktx.v2230)
 
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)

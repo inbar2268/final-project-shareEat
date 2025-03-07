@@ -51,7 +51,7 @@ class Model private constructor() {
 
     fun editUser(user: User ,oldUserId: String, callback: EmptyCallback) {
         executor.execute {
-            database.userDao().updateUser(oldUserId,user.name,user.id,user.phone,user.address,user.isChecked)
+            database.userDao().updateUser(oldUserId,user.firstName,user.id,user.lastName,user.email,user.password)
             mainHandler.post {
                 callback()
             }
