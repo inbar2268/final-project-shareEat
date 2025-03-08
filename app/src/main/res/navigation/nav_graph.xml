@@ -11,8 +11,8 @@
         android:label="Sign in"
         tools:layout="@layout/fragment_sign_in">
         <action
-            android:id="@+id/action_signInFragment_to_homePageFragment"
-            app:destination="@id/homePageFragment"
+            android:id="@+id/action_signInFragment_to_ProfileFragment"
+            app:destination="@id/profileFragment"
             app:popUpTo="@id/signInFragment"
             app:popUpToInclusive="true" />
         <action
@@ -26,11 +26,6 @@
         android:label="Sign up"
         tools:layout="@layout/fragment_sign_up">
         <action
-            android:id="@+id/action_signUpFragment_to_homePageFragment"
-            app:destination="@id/homePageFragment"
-            app:popUpTo="@id/signUpFragment"
-            app:popUpToInclusive="true" />
-        <action
             android:id="@+id/action_signUpFragment_to_signInFragment"
             app:destination="@id/signInFragment"
             app:popUpTo="@id/signUpFragment"
@@ -38,14 +33,13 @@
     </fragment>
 
     <fragment
-        android:id="@+id/homePageFragment"
-        android:name="com.example.shareeat.HomePageFragment"
-        android:label="Home"
-        tools:layout="@layout/fragment_home_page">
-        <action
-            android:id="@+id/action_homePageFragment_to_signInFragment"
-            app:destination="@id/signInFragment"
-            app:popUpTo="@id/homePageFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
+        android:id="@+id/profileFragment"
+        android:name="com.example.shareeat.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
+    <action
+        android:id="@+id/action_ProfileFragment_to_signInFragment"
+        app:destination="@id/signInFragment"
+        app:popUpTo="@id/profileFragment"
+        app:popUpToInclusive="true" />
 </navigation>
