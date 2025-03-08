@@ -47,7 +47,7 @@ class SignInFragment : Fragment() {
 
         val currentUser = auth.currentUser
         if (currentUser != null) {
-            Navigation.findNavController(view).navigate(R.id.action_signInFragment_to_homePageFragment)
+            Navigation.findNavController(view).navigate(R.id.action_signInFragment_to_ProfileFragment)
         }
     }
 
@@ -70,7 +70,7 @@ class SignInFragment : Fragment() {
 
                 if (task.isSuccessful) {
                     Toast.makeText(requireContext(), "Login successful", Toast.LENGTH_SHORT).show()
-                    Navigation.findNavController(view).navigate(R.id.action_signInFragment_to_homePageFragment)
+                    Navigation.findNavController(view).navigate(R.id.action_signInFragment_to_ProfileFragment)
                 } else {
                     when (task.exception) {
                         is FirebaseAuthInvalidUserException -> {

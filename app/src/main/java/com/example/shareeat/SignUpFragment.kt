@@ -13,6 +13,7 @@ import com.example.shareeat.databinding.FragmentSignUpBinding
 import com.example.shareeat.model.Model
 import com.example.shareeat.model.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 
 class SignUpFragment : Fragment() {
 
@@ -80,12 +81,23 @@ class SignUpFragment : Fragment() {
                             password = password
                         )
 
-                        Model.shared.add(user, Model.Storage.FIREBASE) {
-                            binding?.progressBar?.visibility = View.GONE
-                            Toast.makeText(requireContext(), "Account created successfully", Toast.LENGTH_SHORT).show()
+                        val userProfileChangeRequest = UserProfileChangeRequest.Builder()
+                            .setDisplayName("$firstName $lastName") // Combine first and last name
+                            .build()
 
-                            Navigation.findNavController(view).navigate(R.id.action_signUpFragment_to_signInFragment)
-                        }
+                        auth.currentUser?.updateProfile(userProfileChangeRequest)
+                            ?.addOnCompleteListener { updateTask ->
+                                if (updateTask.isSuccessful) {
+                                    Model.shared.add(user, Model.Storage.FIREBASE) {
+                                        binding?.progressBar?.visibility = View.GONE
+                                        Toast.makeText(requireContext(), "Account created successfully", Toast.LENGTH_SHORT).show()
+                                        Navigation.findNavController(view).navigate(R.id.action_signUpFragment_to_signInFragment)
+                                    }
+                                } else {
+                                    binding?.progressBar?.visibility = View.GONE
+                                    Toast.makeText(requireContext(), "Error setting display name", Toast.LENGTH_SHORT).show()
+                                }
+                            }
                     } else {
                         binding?.progressBar?.visibility = View.GONE
                         Toast.makeText(requireContext(), "Error creating account", Toast.LENGTH_SHORT).show()

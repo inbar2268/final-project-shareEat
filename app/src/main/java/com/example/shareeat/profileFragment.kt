@@ -1,18 +1,18 @@
 package com.example.shareeat
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import com.example.shareeat.databinding.FragmentHomePageBinding
+import com.example.shareeat.databinding.FragmentProfileBinding
 import com.google.firebase.auth.FirebaseAuth
 
-class HomePageFragment : Fragment() {
+class ProfileFragment : Fragment() {
 
-    private var binding: FragmentHomePageBinding? = null
+    private var binding: FragmentProfileBinding? = null
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +24,7 @@ class HomePageFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentHomePageBinding.inflate(layoutInflater, container, false)
+        binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
 
         // Display user information
         displayUserInfo()
@@ -33,7 +33,7 @@ class HomePageFragment : Fragment() {
         binding?.logoutButton?.setOnClickListener {
             auth.signOut()
             Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show()
-            Navigation.findNavController(it).navigate(R.id.action_homePageFragment_to_signInFragment)
+            Navigation.findNavController(it).navigate(R.id.action_ProfileFragment_to_signInFragment)
         }
 
         return binding?.root
