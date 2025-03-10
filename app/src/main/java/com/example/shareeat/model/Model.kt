@@ -9,6 +9,7 @@ import com.example.shareeat.base.EmptyCallback
 import com.example.shareeat.model.dao.AppLocalDb
 import com.example.shareeat.model.dao.AppLocalDbRepository
 import com.example.shareeat.model.firebase.FirebaseModel
+import com.example.shareeat.model.firebase.FirebaseRecipe
 import java.util.concurrent.Executors
 import com.example.shareeat.model.firebase.FirebaseUser
 
@@ -28,10 +29,12 @@ class Model private constructor() {
     private var executor = Executors.newSingleThreadExecutor()
     private var mainHandler = HandlerCompat.createAsync(Looper.getMainLooper())
     val users: LiveData<List<User>> = database.userDao().getAllUser()
+    val recipes: LiveData<List<Recipe>> = database.recipeDao().getAllRecipes()
     val loadingState: MutableLiveData<LoadingState> = MutableLiveData<LoadingState>()
 
     private val firebaseModel = FirebaseModel()
     private val firebaseUser = FirebaseUser(firebaseModel)
+   private val firebaseRecipe = FirebaseRecipe(firebaseModel)
 
     companion object {
         val shared = Model()
@@ -58,24 +61,69 @@ class Model private constructor() {
         }
     }
 
+    fun refreshAllRecipes() {
+        loadingState.postValue(LoadingState.LOADING)
+        val lastUpdated: Long = Recipe.lastUpdated
+        firebaseRecipe.getAllRecipes(lastUpdated) { recipes ->
+            executor.execute {
+                var currentTime = lastUpdated
+                for (recipe in recipes) {
+                    database.recipeDao().insertAll(recipe)
+                    recipe.lastUpdated?.let {
+                        if (currentTime < it) {
+                            currentTime = it
+                        }
+                    }
+                }
+                Recipe.lastUpdated = currentTime
+                loadingState.postValue(LoadingState.LOADED)
+            }
+        }
+    }
+
+
     fun add(user: User, storage: Storage, callback: EmptyCallback) {
         firebaseUser.add(user) {
             callback()
         }
     }
 
-    private fun uploadTo(storage: Storage, image: Bitmap, name: String, callback: (String?) -> Unit) {
+    fun addRecipe(recipe: Recipe, callback: EmptyCallback) {
+        firebaseRecipe.add(recipe) {
+            executor.execute {
+                database.recipeDao().insertAll(recipe) // שמירה במסד המקומי
+                mainHandler.post { callback() }
+            }
+        }
+    }
+
+    private fun uploadTo(
+        storage: Storage,
+        image: Bitmap,
+        name: String,
+        callback: (String?) -> Unit
+    ) {
         when (storage) {
             Storage.FIREBASE -> {
                 uploadImageToFirebase(image, name, callback)
             }
+
             Storage.CLOUDINARY -> {
             }
         }
     }
 
+
     fun delete(user: User, callback: EmptyCallback) {
         firebaseUser.delete(user, callback)
+    }
+    fun deleteRecipe(recipe: Recipe, callback: EmptyCallback) {
+        firebaseRecipe.delete(recipe) {
+            executor.execute {
+                database.recipeDao().delete(recipe)
+                mainHandler.post { callback() }
+            }
+        }
     }
 
     private fun uploadImageToFirebase(
@@ -85,7 +133,6 @@ class Model private constructor() {
     ) {
         firebaseModel.uploadImage(image, name, callback)
     }
-
 
 
 }

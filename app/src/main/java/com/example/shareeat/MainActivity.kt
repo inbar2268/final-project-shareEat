@@ -15,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import com.example.shareeat.model.Recipe
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
 
         setContentView(R.layout.activity_main)
+
 
         val toolBar: Toolbar = findViewById(R.id.main_toolbar)
         toolBar.setBackgroundColor(Color.parseColor("#333333"))
