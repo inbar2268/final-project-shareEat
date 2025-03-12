@@ -6,12 +6,9 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup.MarginLayoutParams
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
@@ -32,7 +29,8 @@ class MainActivity : AppCompatActivity() {
         toolBar.setBackgroundColor(Color.parseColor("#333333"))
         setSupportActionBar(toolBar)
 
-        val navHostController: NavHostFragment? = supportFragmentManager.findFragmentById(R.id.main_nav_host) as? NavHostFragment
+        val navHostController: NavHostFragment? =
+            supportFragmentManager.findFragmentById(R.id.main_nav_host) as? NavHostFragment
         navController = navHostController?.navController
         Log.d("MainActivity", "NavController is $navController")
 
@@ -42,7 +40,6 @@ class MainActivity : AppCompatActivity() {
                 navController = it
             )
         }
-
         // Setup bottom navigation
         bottomNavigationView = findViewById(R.id.bottom_navigation)
         navController?.let { NavigationUI.setupWithNavController(bottomNavigationView, it) }
@@ -53,6 +50,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.signInFragment, R.id.signUpFragment -> {
                     bottomNavigationView.visibility = View.GONE
                 }
+
                 else -> {
                     bottomNavigationView.visibility = View.VISIBLE
                 }
@@ -71,6 +69,7 @@ class MainActivity : AppCompatActivity() {
                 navController?.popBackStack()
                 true
             }
+
             else -> {
                 navController?.let { NavigationUI.onNavDestinationSelected(item, it) }
                 true

@@ -4,11 +4,13 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.shareeat.base.MyApplication
+import com.example.shareeat.model.Recipe
 import com.example.shareeat.model.User
 
-@Database(entities = [User::class], version = 3)
+@Database(entities = [User::class, Recipe::class], version = 4)
 abstract class AppLocalDbRepository: RoomDatabase() {
     abstract fun userDao(): UserDao
+    abstract fun recipeDao(): RecipeDao
 }
 
 object AppLocalDb {
