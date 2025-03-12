@@ -6,17 +6,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.shareeat.adapters.RecipeRecyclerAdapter
+import com.example.shareeat.model.Model
 import com.example.shareeat.model.Recipe
 
 
 class homeFragment : Fragment() {
     private var binding: FragmentHomeBinding? = null
-//    private var recipes: List<Recipe> = emptyList()
 
+    //    private var recipes: List<Recipe> = emptyList()
+    private val viewModel: RecipesViewModel by viewModels()
     val recipes: List<Recipe> = listOf(
         Recipe(
             title = "פסטה ברוטב עגבניות",
@@ -67,20 +69,44 @@ class homeFragment : Fragment() {
 
         binding?.recipesRecyclerView?.setHasFixedSize(true)
         val layoutManager = LinearLayoutManager(context)
-        binding?.recipesRecyclerView?.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        binding?.recipesRecyclerView?.layoutManager =
+            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
 
-        adapter = RecipeRecyclerAdapter(recipes)
+        adapter = RecipeRecyclerAdapter(viewModel.recipes.value?: listOf())
+
+        viewModel.recipes.observe(viewLifecycleOwner){
+            adapter?.update(it)
+            adapter?.notifyDataSetChanged()
+            binding?.progressBar?.visibility=View.GONE
+        }
+
+        binding?.swipeToRefresh?.setOnRefreshListener {
+            viewModel.refreshAllRecipes()
+        }
+
+        Model.shared.loadingState.observe(viewLifecycleOwner){
+            state->
+            binding?.swipeToRefresh?.isRefreshing=state==Model.LoadingState.LOADING
+        }
         binding?.recipesRecyclerView?.adapter = adapter
+
         return binding?.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getAllRecipes()
+    }
+
+    private fun getAllRecipes() {
+        binding?.progressBar?.visibility = View.VISIBLE
+        viewModel.refreshAllRecipes()
     }
 }
