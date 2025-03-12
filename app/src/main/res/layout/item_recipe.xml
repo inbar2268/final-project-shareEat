@@ -7,7 +7,9 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="#F5D0B9"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,8 +19,10 @@
         <ImageView
             android:id="@+id/recipeImage"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
             android:scaleType="centerCrop"
+            android:minHeight="120dp"
             tools:src="@tools:sample/backgrounds/scenic"
             android:contentDescription="@string/recipe_image" />
 
