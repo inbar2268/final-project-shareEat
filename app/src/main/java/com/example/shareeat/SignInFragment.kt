@@ -1,16 +1,15 @@
 package com.example.shareeat
-
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.example.shareeat.databinding.FragmentSignInBinding
+import com.example.shareeat.model.User.Companion.saveUserToLocalStorage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
@@ -70,6 +69,7 @@ class SignInFragment : Fragment() {
 
                 if (task.isSuccessful) {
                     Toast.makeText(requireContext(), "Login successful", Toast.LENGTH_SHORT).show()
+                    saveUserToLocalStorage(requireContext(), auth.currentUser)
                     Navigation.findNavController(view).navigate(R.id.action_signInFragment_to_ProfileFragment)
                 } else {
                     when (task.exception) {
@@ -95,4 +95,5 @@ class SignInFragment : Fragment() {
         super.onDestroyView()
         binding = null
     }
+
 }
