@@ -20,6 +20,7 @@ navigationSafeArgsGradlePlugin = "2.8.5"
 picasso = "2.8"
 roomRuntime = "2.6.1"
 googleServices = "4.4.2"
+securityCrypto = "1.1.0-alpha06"
 swiperefreshlayout = "1.1.0"
 firebaseAuthKtx = "23.2.0"
 
@@ -31,6 +32,7 @@ androidx-navigation-ui = { module = "androidx.navigation:navigation-ui", version
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
+androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 cloudinary-android = { module = "com.cloudinary:cloudinary-android", version.ref = "cloudinaryAndroid" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }

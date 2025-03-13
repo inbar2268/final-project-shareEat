@@ -1,11 +1,13 @@
 package com.example.shareeat.model
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.example.shareeat.base.MyApplication
+import com.google.firebase.auth.FirebaseUser
 
 @Entity
 data class User(
@@ -55,6 +57,32 @@ data class User(
                 lastUpdated = lastUpdatedLongTimestamp
             )
         }
+
+        fun getUserFromLocalStorage(context: Context): Map<String, String?> {
+            val sharedPref = context.getSharedPreferences("USER_PREFS", Context.MODE_PRIVATE)
+            return mapOf(
+                "uid" to sharedPref.getString("uid", null),
+                "email" to sharedPref.getString("email", null),
+                "displayName" to sharedPref.getString("displayName", null),
+                )
+        }
+
+        fun clearAllUserData(context: Context) {
+            val sharedPref = context.getSharedPreferences("USER_PREFS", Context.MODE_PRIVATE)
+            val editor = sharedPref.edit()
+            editor.clear()
+            editor.apply()
+        }
+
+        fun saveUserToLocalStorage(context: Context, user: FirebaseUser?) {
+            val sharedPref = context.getSharedPreferences("USER_PREFS", Context.MODE_PRIVATE)
+            val editor = sharedPref.edit()
+
+            editor.putString("uid", user?.uid)
+            editor.putString("email", user?.email)
+            editor.putString("displayName", user?.displayName)
+            editor.apply()
+        }
     }
 
     val json: Map<String, Any>
@@ -66,4 +94,8 @@ data class User(
             PASSWORD_KEY to password,
             LAST_UPDATED to FieldValue.serverTimestamp()
         )
+
+
 }
+
+
