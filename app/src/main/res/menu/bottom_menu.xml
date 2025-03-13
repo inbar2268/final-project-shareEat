@@ -9,7 +9,7 @@
         android:icon="@drawable/ic_search"
         android:title="Search" />
     <item
-        android:id="@+id/addRecipeFragment"
+        android:id="@+id/uploadRecipeFragment"
         android:icon="@drawable/ic_add"
         android:title="Add" />
     <item

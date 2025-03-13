@@ -48,4 +48,10 @@
         android:name="com.example.shareeat.homeFragment"
         android:label="home"
         tools:layout="@layout/fragment_home"/>
+
+    <fragment
+        android:id="@+id/uploadRecipeFragment"
+        android:name="com.example.shareeat.UploadRecipeFragment"
+        android:label="Upload Recipe"
+        tools:layout="@layout/fragment_upload_recipe"/>
 </navigation>
