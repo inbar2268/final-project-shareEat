@@ -73,6 +73,10 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
 
+    implementation(libs.retrofit)
+    implementation(libs.gson)
+    implementation(libs.converter.gson)
+
     implementation(libs.androidx.swiperefreshlayout)
     implementation(platform(libs.firebase.bom.v33100))
     implementation(libs.retrofit)
@@ -87,6 +91,8 @@ dependencies {
     implementation(libs.picasso)
     implementation(libs.cloudinary.android)
     implementation(libs.firebase.auth.ktx.v2230)
+
+    implementation(libs.cloudinary.android.v231)
 
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)

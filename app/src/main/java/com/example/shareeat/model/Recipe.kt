@@ -7,8 +7,6 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.example.shareeat.base.MyApplication
 
-
-
 @Entity
 data class Recipe(
     @PrimaryKey val id: String = "",
@@ -23,8 +21,6 @@ data class Recipe(
 ) {
 
     companion object {
-
-
         var lastUpdated: Long
             get() = MyApplication.Globals.context?.getSharedPreferences("TAG", Context.MODE_PRIVATE)
                 ?.getLong(LOCAL_LAST_UPDATED, 0) ?: 0
@@ -35,7 +31,7 @@ data class Recipe(
                     }
             }
 
-
+        // Firestore Keys
         const val ID_KEY = "id"
         const val TITLE_KEY = "title"
         const val DESCRIPTION_KEY = "description"
@@ -43,9 +39,9 @@ data class Recipe(
         const val INSTRUCTIONS_KEY = "instructions"
         const val USER_ID_KEY = "userId"
         const val USER_NAME_KEY = "userName"
+        const val TIMESTAMP = "timestamp"
         const val LAST_UPDATED = "lastUpdated"
         const val LOCAL_LAST_UPDATED = "localRecipeLastUpdated"
-
 
         fun fromJSON(json: Map<String, Any>): Recipe {
             val id = json[ID_KEY] as? String ?: ""
@@ -55,10 +51,9 @@ data class Recipe(
             val instructions = json[INSTRUCTIONS_KEY] as? String ?: ""
             val userId = json[USER_ID_KEY] as? String ?: ""
             val userName = json[USER_NAME_KEY] as? String ?: ""
-            val timeStamp = json[LAST_UPDATED] as? Timestamp
-            val lastUpdatedLongTimestamp = timeStamp?.toDate()?.time
 
-
+            val timestampValue = json[TIMESTAMP] as? Timestamp
+            val lastUpdatedValue = json[LAST_UPDATED] as? Timestamp
 
             return Recipe(
                 id = id,
@@ -68,7 +63,8 @@ data class Recipe(
                 instructions = instructions,
                 userId = userId,
                 userName = userName,
-                lastUpdated = lastUpdatedLongTimestamp
+                timestamp = timestampValue?.toDate()?.time,  // ✅ Now included
+                lastUpdated = lastUpdatedValue?.toDate()?.time
             )
         }
     }
@@ -83,6 +79,7 @@ data class Recipe(
             INSTRUCTIONS_KEY to instructions,
             USER_ID_KEY to userId,
             USER_NAME_KEY to userName,
+            TIMESTAMP to FieldValue.serverTimestamp(),
             LAST_UPDATED to FieldValue.serverTimestamp()
         )
 }
