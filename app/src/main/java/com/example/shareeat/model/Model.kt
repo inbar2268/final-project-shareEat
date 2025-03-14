@@ -10,6 +10,8 @@ import com.cloudinary.Cloudinary
 import com.cloudinary.utils.ObjectUtils
 import com.example.shareeat.BuildConfig
 import com.example.shareeat.base.EmptyCallback
+import com.example.shareeat.base.RecipeCallback
+import com.example.shareeat.base.RecipesCallback
 import com.example.shareeat.model.dao.AppLocalDb
 import com.example.shareeat.model.dao.AppLocalDbRepository
 import com.example.shareeat.model.firebase.FirebaseModel
@@ -185,5 +187,14 @@ class Model private constructor() {
         callback: (String?) -> Unit
     ) {
         firebaseModel.uploadImage(image, name, callback)
+    }
+
+    fun getRecipeById(studentId: String, callback: RecipeCallback) {
+        executor.execute {
+            val recipe = database.recipeDao().getRecipeById(studentId)
+            mainHandler.post {
+                callback(recipe)
+            }
+        }
     }
 }
