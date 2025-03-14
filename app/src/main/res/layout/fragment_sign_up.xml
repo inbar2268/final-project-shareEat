@@ -10,7 +10,6 @@
     android:layout_marginBottom="0dp"
     tools:context=".SignUpFragment">
 
-    <!-- Top curved background shape -->
     <View
         android:id="@+id/topBackground"
         android:layout_width="match_parent"
@@ -20,7 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Chef hat logo -->
     <ImageView
         android:id="@+id/logoImage"
         android:layout_width="100dp"
@@ -31,68 +29,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- First Name Label -->
     <TextView
-        android:id="@+id/firstNameLabel"
+        android:id="@+id/NameLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginTop="40dp"
-        android:text="first name"
+        android:fontFamily="serif"
+        android:text="full name"
         android:textColor="#C86D22"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:fontFamily="serif"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logoImage" />
 
-    <!-- First Name Input -->
     <EditText
         android:id="@+id/firstNameInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginEnd="10dp"
-        android:backgroundTint="#333333"
-        android:hint=""
-        android:inputType="textPersonName"
-        android:padding="8dp"
-        android:textColor="#000000"
-        app:layout_constraintEnd_toStartOf="@+id/lastNameInput"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/firstNameLabel" />
-
-    <!-- Last Name Label -->
-    <TextView
-        android:id="@+id/lastNameLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="40dp"
-        android:text="last name"
-        android:textColor="#C86D22"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:fontFamily="serif"
-        app:layout_constraintStart_toStartOf="@+id/lastNameInput"
-        app:layout_constraintTop_toBottomOf="@+id/logoImage" />
-
-    <!-- Last Name Input -->
-    <EditText
-        android:id="@+id/lastNameInput"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
         android:layout_marginEnd="40dp"
         android:backgroundTint="#333333"
         android:hint=""
-        android:inputType="textPersonName"
+        android:inputType="textEmailAddress"
         android:padding="8dp"
         android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/firstNameInput"
-        app:layout_constraintTop_toBottomOf="@+id/lastNameLabel" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/NameLabel" />
 
-    <!-- Email Label -->
+
     <TextView
         android:id="@+id/emailLabel"
         android:layout_width="wrap_content"
@@ -107,7 +73,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/firstNameInput" />
 
-    <!-- Email Input -->
     <EditText
         android:id="@+id/emailInput"
         android:layout_width="0dp"
@@ -123,7 +88,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailLabel" />
 
-    <!-- Password Label -->
     <TextView
         android:id="@+id/passwordLabel"
         android:layout_width="wrap_content"
@@ -138,7 +102,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailInput" />
 
-    <!-- Password Input -->
     <EditText
         android:id="@+id/passwordInput"
         android:layout_width="0dp"
@@ -154,7 +117,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordLabel" />
 
-    <!-- Confirm Password Label -->
     <TextView
         android:id="@+id/confirmPasswordLabel"
         android:layout_width="wrap_content"
@@ -169,7 +131,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordInput" />
 
-    <!-- Confirm Password Input -->
     <EditText
         android:id="@+id/confirmPasswordInput"
         android:layout_width="0dp"
@@ -185,7 +146,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/confirmPasswordLabel" />
 
-    <!-- Sign Up Button -->
     <Button
         android:id="@+id/signUpButton"
         android:layout_width="0dp"
@@ -203,7 +163,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/confirmPasswordInput" />
 
-    <!-- Login Link -->
     <TextView
         android:id="@+id/loginLink"
         android:layout_width="wrap_content"

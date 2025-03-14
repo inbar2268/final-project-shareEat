@@ -69,7 +69,9 @@ class SignInFragment : Fragment() {
 
                 if (task.isSuccessful) {
                     Toast.makeText(requireContext(), "Login successful", Toast.LENGTH_SHORT).show()
-                    saveUserToLocalStorage(requireContext(), auth.currentUser)
+                    val currentUser = auth.currentUser
+                    saveUserToLocalStorage(requireContext(),
+                        currentUser?.uid ?: "", currentUser?.email ?: "",currentUser?.displayName ?: "")
                     Navigation.findNavController(view).navigate(R.id.action_signInFragment_to_ProfileFragment)
                 } else {
                     when (task.exception) {

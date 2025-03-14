@@ -44,13 +44,12 @@ class SignUpFragment : Fragment() {
     }
 
     private fun onSignUpClicked(view: View) {
-        val firstName = binding?.firstNameInput?.text.toString().trim()
-        val lastName = binding?.lastNameInput?.text.toString().trim()
+        val name = binding?.firstNameInput?.text.toString().trim()
         val email = binding?.emailInput?.text.toString().trim()
         val password = binding?.passwordInput?.text.toString().trim()
         val confirmPassword = binding?.confirmPasswordInput?.text.toString().trim()
 
-        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             Toast.makeText(requireContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show()
             return
         }
@@ -75,22 +74,23 @@ class SignUpFragment : Fragment() {
                     if (userId != null) {
                         val user = User(
                             id = userId,
-                            firstName = firstName,
-                            lastName = lastName,
+                            displayName = name,
                             email = email,
+                            photoUrl = "",
                             password = password
                         )
 
                         val userProfileChangeRequest = UserProfileChangeRequest.Builder()
-                            .setDisplayName("$firstName $lastName") // Combine first and last name
+                            .setDisplayName(name)
                             .build()
 
                         auth.currentUser?.updateProfile(userProfileChangeRequest)
                             ?.addOnCompleteListener { updateTask ->
                                 if (updateTask.isSuccessful) {
-                                    Model.shared.add(user, Model.Storage.FIREBASE) {
+                                    Model.shared.addUser(user) {
                                         binding?.progressBar?.visibility = View.GONE
                                         Toast.makeText(requireContext(), "Account created successfully", Toast.LENGTH_SHORT).show()
+                                        auth.signOut()
                                         Navigation.findNavController(view).navigate(R.id.action_signUpFragment_to_signInFragment)
                                     }
                                 } else {

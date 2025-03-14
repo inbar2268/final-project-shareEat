@@ -47,6 +47,8 @@ class Model private constructor() {
         val shared = Model()
     }
 
+    // user:
+
     fun refreshAllUsers() {
         loadingState.postValue(LoadingState.LOADING)
         val lastUpdated: Long = User.lastUpdated
@@ -63,6 +65,55 @@ class Model private constructor() {
                 }
                 User.lastUpdated = currentTime
                 loadingState.postValue(LoadingState.LOADED)
+            }
+        }
+    }
+
+    fun addUser(user: User, callback: EmptyCallback) {
+        firebaseUser.add(user) {
+            executor.execute {
+                database.userDao().insertAll(user)
+                mainHandler.post { callback() }
+            }
+        }
+    }
+
+    fun getUserById(userId: String, callback: (User?) -> Unit) {
+        executor.execute {
+            val localUser = database.userDao().getUserById(userId)
+            if (localUser != null) {
+                mainHandler.post { callback(localUser) }
+            } else {
+                firebaseUser.getUserById(userId) { user ->
+                    if (user != null) {
+                        executor.execute {
+                            database.userDao().insertAll(user)
+                            mainHandler.post { callback(user) }
+                        }
+                    } else {
+                        mainHandler.post { callback(null) }
+                    }
+                }
+            }
+        }
+    }
+
+    fun editUser(user: User, callback: EmptyCallback) {
+        user.lastUpdated = System.currentTimeMillis()
+        firebaseUser.editUser(user) {
+            executor.execute {
+                database.userDao().insertAll(user)
+                mainHandler.post { callback() }
+            }
+        }
+    }
+
+
+    fun addRecipe(recipe: Recipe, callback: EmptyCallback) {
+        firebaseRecipe.add(recipe) {
+            executor.execute {
+                database.recipeDao().insertAll(recipe)
+                mainHandler.post { callback() }
             }
         }
     }
@@ -87,25 +138,10 @@ class Model private constructor() {
         }
     }
 
-    fun add(user: User, storage: Storage, callback: EmptyCallback) {
-        firebaseUser.add(user) {
-            callback()
-        }
-    }
-
-    fun addRecipe(recipe: Recipe, callback: EmptyCallback) {
-        firebaseRecipe.add(recipe) {
-            executor.execute {
-                database.recipeDao().insertAll(recipe)
-                mainHandler.post { callback() }
-            }
-        }
-    }
-
     /**
      * Uploads an image to Cloudinary and returns its URL.
      */
-    private fun uploadImageToCloudinary(image: Bitmap, callback: (String?) -> Unit) {
+    private fun uploadImageToCloudinary(folder: String, image: Bitmap, callback: (String?) -> Unit) {
         Log.d("Cloudinary Upload", "Starting upload process...")
 
         val stream = ByteArrayOutputStream()
@@ -130,7 +166,7 @@ class Model private constructor() {
         executor.execute {
             try {
                 Log.d("Cloudinary Upload", "Uploading image to Cloudinary...")
-                val uploadResult = cloudinary.uploader().upload(imageData, ObjectUtils.asMap("folder", "recipe_images"))
+                val uploadResult = cloudinary.uploader().upload(imageData, ObjectUtils.asMap("folder", folder))
 
                 Log.d("Cloudinary Upload", "Upload response received: $uploadResult")
                 val imageUrl = uploadResult["secure_url"] as? String
@@ -156,6 +192,7 @@ class Model private constructor() {
         storage: Storage,
         image: Bitmap,
         name: String,
+        folder: String,
         callback: (String?) -> Unit
     ) {
         when (storage) {
@@ -163,7 +200,7 @@ class Model private constructor() {
                 uploadImageToFirebase(image, name, callback)
             }
             Storage.CLOUDINARY -> {
-                uploadImageToCloudinary(image, callback)
+                uploadImageToCloudinary(folder, image, callback)
             }
         }
     }

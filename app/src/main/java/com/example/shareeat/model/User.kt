@@ -12,11 +12,11 @@ import com.google.firebase.auth.FirebaseUser
 @Entity
 data class User(
     @PrimaryKey val id: String,
-    val firstName: String,
-    val lastName: String,
-    val email: String,
+    var displayName: String,
+    var email: String,
     val password: String,
-    val lastUpdated: Long? = null
+    var photoUrl: String,
+    var lastUpdated: Long? = null
 ) {
 
     companion object {
@@ -33,27 +33,27 @@ data class User(
             }
 
         const val ID_KEY = "id"
-        const val FIRST_NAME_KEY = "firstName"
-        const val LAST_NAME_KEY = "lastName"
+        const val DISPLAY_NAME_KEY = "displayName"
         const val EMAIL_KEY = "email"
         const val PASSWORD_KEY = "password"
+        const val PHOTO_URL_KEY = "photoUrl"
         const val LAST_UPDATED = "lastUpdated"
         const val LOCAL_LAST_UPDATED = "locaStudentLastUpdated"
 
         fun fromJSON(json: Map<String, Any>): User {
             val id = json[ID_KEY] as? String ?: ""
-            val firstName = json[FIRST_NAME_KEY] as? String ?: ""
-            val lastName = json[LAST_NAME_KEY] as? String ?: ""
             val email = json[EMAIL_KEY] as? String ?: ""
+            val displayName = json[DISPLAY_NAME_KEY] as? String ?: ""
+            val photoUrl = json[PHOTO_URL_KEY]  as? String ?: ""
             val password = json[PASSWORD_KEY] as? String ?: ""
             val timeStamp = json[LAST_UPDATED] as? Timestamp
             val lastUpdatedLongTimestamp = timeStamp?.toDate()?.time
             return User(
                 id = id,
-                firstName = firstName,
-                lastName = lastName,
+                displayName = displayName,
                 email = email,
                 password = password,
+                photoUrl = photoUrl,
                 lastUpdated = lastUpdatedLongTimestamp
             )
         }
@@ -74,13 +74,13 @@ data class User(
             editor.apply()
         }
 
-        fun saveUserToLocalStorage(context: Context, user: FirebaseUser?) {
+        fun saveUserToLocalStorage(context: Context, uid: String, email: String, displayName: String) {
             val sharedPref = context.getSharedPreferences("USER_PREFS", Context.MODE_PRIVATE)
             val editor = sharedPref.edit()
 
-            editor.putString("uid", user?.uid)
-            editor.putString("email", user?.email)
-            editor.putString("displayName", user?.displayName)
+            editor.putString("uid", uid)
+            editor.putString("email", email)
+            editor.putString("displayName", displayName)
             editor.apply()
         }
     }
@@ -88,10 +88,10 @@ data class User(
     val json: Map<String, Any>
         get() = hashMapOf(
             ID_KEY to id,
-            FIRST_NAME_KEY to firstName,
-            LAST_NAME_KEY to lastName,
+            DISPLAY_NAME_KEY to displayName,
             EMAIL_KEY to email,
             PASSWORD_KEY to password,
+            PHOTO_URL_KEY to photoUrl,
             LAST_UPDATED to FieldValue.serverTimestamp()
         )
 

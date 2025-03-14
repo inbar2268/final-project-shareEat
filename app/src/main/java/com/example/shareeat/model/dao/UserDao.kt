@@ -6,6 +6,8 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
+import com.example.shareeat.model.Recipe
 import com.example.shareeat.model.User
 
 @Dao
@@ -19,7 +21,7 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg student: User)
 
-    @Delete
-    fun delete(student: User)
+    @Update
+    fun update(user: User)
 
 }

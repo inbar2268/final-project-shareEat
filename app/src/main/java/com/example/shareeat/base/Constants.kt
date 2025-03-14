@@ -12,7 +12,7 @@ typealias EmptyCallback = () -> Unit
 object Constants {
 
     object Collections {
-        const val USERS = "students"
+        const val USERS = "users"
         const val RECIPES = "recipes"
     }
 }

@@ -63,4 +63,47 @@ class FirebaseUser(private val firebaseModel: FirebaseModel) {
                 callback() // Call the callback even on failure, but handle it within the callback
             }
     }
+    fun getUserById(userId: String, callback: (User?) -> Unit) {
+        firebaseModel.database.collection(Constants.Collections.USERS)
+            .document(userId)
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val document = task.result
+                    if (document != null && document.exists()) {
+                        val user = User.fromJSON(document.data ?: mapOf())
+                        Log.d("FirebaseUser", "User fetched: ${user.id}")
+                        callback(user)
+                    } else {
+                        Log.d("FirebaseUser", "User not found: $userId")
+                        callback(null)
+                    }
+                } else {
+                    Log.e("FirebaseUser", "Error fetching user", task.exception)
+                    callback(null)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("FirebaseUser", "Error fetching user", exception)
+                callback(null)
+            }
+    }
+
+    fun editUser(user: User, callback: EmptyCallback) {
+        firebaseModel.database.collection(Constants.Collections.USERS)
+            .document(user.id)
+            .update(user.json)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FirebaseUser", "User updated: ${user.id}")
+                } else {
+                    Log.e("FirebaseUser", "Error updating user", task.exception)
+                }
+                callback()
+            }
+            .addOnFailureListener { exception ->
+                Log.e("FirebaseUser", "Error updating user", exception)
+                callback() // Call the callback even on failure, but handle it within the callback
+            }
+    }
 }
