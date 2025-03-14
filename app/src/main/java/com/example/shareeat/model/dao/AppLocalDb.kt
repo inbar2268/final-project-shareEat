@@ -7,7 +7,7 @@ import com.example.shareeat.base.MyApplication
 import com.example.shareeat.model.Recipe
 import com.example.shareeat.model.User
 
-@Database(entities = [User::class, Recipe::class], version = 4)
+@Database(entities = [User::class, Recipe::class], version = 5)
 abstract class AppLocalDbRepository: RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun recipeDao(): RecipeDao

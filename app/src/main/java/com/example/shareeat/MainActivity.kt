@@ -17,6 +17,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.example.shareeat.model.Recipe
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.example.shareeat.model.Model
 
 
 class MainActivity : AppCompatActivity() {
@@ -60,6 +61,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        Model.shared.refreshAllUsers()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

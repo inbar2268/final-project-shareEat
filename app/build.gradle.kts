@@ -92,6 +92,7 @@ dependencies {
     implementation(libs.cloudinary.android)
     implementation(libs.firebase.auth.ktx.v2230)
 
+
     implementation(libs.cloudinary.android.v231)
 
     kapt(libs.androidx.room.compiler)
@@ -104,6 +105,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.security.crypto)
+    implementation(libs.circleimageview)
+    implementation(libs.glide)
 
 
 
