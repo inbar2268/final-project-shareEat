@@ -5,14 +5,17 @@ import com.squareup.picasso.Picasso
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.shareeat.BuildConfig
 import com.example.shareeat.R
 import com.example.shareeat.databinding.ItemRecipeBinding
 import com.example.shareeat.model.Recipe
 
+interface OnItemClickListener {
+    fun onItemClick(position: Int)
+    fun onItemClick(recipe: Recipe?)
+}
 class RecipeViewHolder(
     private val binding: ItemRecipeBinding,
-    listener: AdapterView.OnItemClickListener?
+    listener: OnItemClickListener?
 ) : RecyclerView.ViewHolder(binding.root){
 
     private var recipe: Recipe? = null
@@ -22,6 +25,11 @@ class RecipeViewHolder(
     init {
         titleTextView = binding.recipeTitle
         recipeImageView = binding.recipeImage
+        itemView.setOnClickListener {
+            listener?.onItemClick(adapterPosition)
+            listener?.onItemClick(recipe)
+        }
+
     }
 
         fun bind(recipe: Recipe?, position: Int) {

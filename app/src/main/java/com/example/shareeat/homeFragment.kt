@@ -2,13 +2,17 @@ package com.example.shareeat
 
 import com.example.shareeat.databinding.FragmentHomeBinding
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.shareeat.adapters.OnItemClickListener
 import com.example.shareeat.adapters.RecipeRecyclerAdapter
 import com.example.shareeat.model.Model
 import com.example.shareeat.model.Recipe
@@ -17,41 +21,7 @@ import com.example.shareeat.model.Recipe
 class homeFragment : Fragment() {
     private var binding: FragmentHomeBinding? = null
 
-    //    private var recipes: List<Recipe> = emptyList()
     private val viewModel: RecipesViewModel by viewModels()
-    val recipes: List<Recipe> = listOf(
-        Recipe(
-            title = "פסטה ברוטב עגבניות",
-            description = "פסטה טעימה עם רוטב עגבניות עשיר",
-            imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7QR8UsG6r86SxTTlPdUxhStBSiYzzsr0V7g&s",
-            instructions = "לבשל את הפסטה, להוסיף רוטב ולבשל עוד 5 דקות.",
-            userId = "123",
-            userName = "שף ישראל",
-            timestamp = System.currentTimeMillis(),
-            lastUpdated = System.currentTimeMillis()
-        ),
-        Recipe(
-            title = "פיצה ביתית",
-            description = "פיצה טעימה עם גבינה מותכת",
-            imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9W8ICl6_sK-d_2Se_cYQuJ6sGCyB4LapIpw&s",
-            instructions = "ללוש בצק, למרוח רוטב, להוסיף גבינה ולאפות 15 דקות.",
-            userId = "456",
-            userName = "שף דנה",
-            timestamp = System.currentTimeMillis(),
-            lastUpdated = System.currentTimeMillis()
-        ),
-        Recipe(
-            title = "עוגת שוקולד",
-            description = "עוגת שוקולד עסיסית וקלה להכנה",
-            imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwZ-GpTn9xTtYg8AC20UZwI3Qkj8E3UCqvSQ&s",
-            instructions = "לערבב חומרים, לאפות 30 דקות ולקרר.",
-            userId = "789",
-            userName = "שף תומר",
-            timestamp = System.currentTimeMillis(),
-            lastUpdated = System.currentTimeMillis()
-        )
-    )
-            ;
     private var adapter: RecipeRecyclerAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,22 +43,50 @@ class homeFragment : Fragment() {
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
 
-        adapter = RecipeRecyclerAdapter(viewModel.recipes.value?: listOf())
+        adapter = RecipeRecyclerAdapter(viewModel.recipes.value ?: listOf())
 
-        viewModel.recipes.observe(viewLifecycleOwner){
+        viewModel.recipes.observe(viewLifecycleOwner) {
             adapter?.update(it)
             adapter?.notifyDataSetChanged()
-            binding?.progressBar?.visibility=View.GONE
+            binding?.progressBar?.visibility = View.GONE
         }
 
         binding?.swipeToRefresh?.setOnRefreshListener {
             viewModel.refreshAllRecipes()
         }
 
-        Model.shared.loadingState.observe(viewLifecycleOwner){
-            state->
-            binding?.swipeToRefresh?.isRefreshing=state==Model.LoadingState.LOADING
+        Model.shared.loadingState.observe(viewLifecycleOwner) { state ->
+            binding?.swipeToRefresh?.isRefreshing = state == Model.LoadingState.LOADING
         }
+
+        adapter?.listener = object : OnItemClickListener {
+            override fun onItemClick(position: Int) {
+                Log.d("TAG", "On click Activity listener on position $position")
+            }
+
+            override fun onItemClick(recipe: Recipe?) {
+//                recipe?.let {
+//                    val action = homeFragmentDirections.actionRecipesFragmentToRecipesDetailsFragment ()
+//                    val bundle = Bundle()
+//                    bundle.putString("recipeId", it.id)
+//                    binding?.root?.let {
+//                        Navigation.findNavController(it).navigate(action.actionId,bundle)
+//                    }
+//                }
+                Log.d("TAG", "On student clicked name: ${recipe?.id}")
+
+//                Navigation.findNavController(view).navigate(R.id.action_studentsListFragment_to_blueFragment)
+
+                recipe?.let {
+                    val action =
+                        homeFragmentDirections.actionRecipesFragmentToRecipesDetailsFragment(it.id)
+                    binding?.root?.let {
+                        Navigation.findNavController(it).navigate(action)
+                    }
+                }
+            }
+        }
+
         binding?.recipesRecyclerView?.adapter = adapter
 
         return binding?.root
