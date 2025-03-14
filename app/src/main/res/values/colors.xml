@@ -6,4 +6,7 @@
     <color name="light_beige">#F5E1C5</color>
     <color name="theme_orange">#D88C53</color>
     <color name="gray">#808080</color>
+    <color name="dark_brown">#8B4513</color>
+    <color name="light_peach">#F5D0B9</color>
+    <color name="dark_gray">#666666</color>
 </resources>

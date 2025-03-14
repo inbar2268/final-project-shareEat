@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<paths>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Access to images stored in the app's specific external storage -->
     <external-files-path
         name="camera_photos"
         path="Pictures/" />
 
+    <!-- Access to cached images -->
     <cache-path
         name="cached_images"
         path="cache/" />
 
+    <!-- Access to internal storage within the app -->
     <files-path
         name="internal_photos"
         path="images/" />
+
+    <!-- Allow access to the Download folder -->
+    <external-path
+        name="download_images"
+        path="Download/" />
+
+    <!-- Allow access to the DCIM/Camera folder (Photos app) -->
+    <external-path
+        name="dcim_photos"
+        path="DCIM/Camera/" />
+
 </paths>
