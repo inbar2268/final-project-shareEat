@@ -10,14 +10,14 @@ import com.example.shareeat.base.MyApplication
 @Entity
 data class Recipe(
     @PrimaryKey val id: String = "",
-    val title: String = "",
-    val description: String = "",
-    val imageUrl: String? = null,
-    val instructions: String = "",
+    var title: String = "",
+    var description: String = "",
+    var imageUrl: String? = null,
+    var instructions: String = "",
     val userId: String = "",
     val userName: String = "",
-    val timestamp: Long? = null,
-    val lastUpdated: Long? = null
+    var timestamp: Long? = null,
+    var lastUpdated: Long? = null
 ) {
 
     companion object {

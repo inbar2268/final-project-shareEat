@@ -4,6 +4,8 @@
     <string name="add_photo">Add Photo</string>
     <string name="recipe_image_preview">Recipe Image Preview</string>
     <string name="post">Post</string>
+    <string name="update">Update</string>
+    <string name="edit">Edit</string>
     <string name="what_did_you_cook_today">What did you cook today?</string>
     <string name="recipe_description">Write your recipe here…</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>

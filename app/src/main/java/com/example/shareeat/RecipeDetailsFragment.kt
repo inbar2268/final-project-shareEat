@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import com.example.shareeat.databinding.FragmentRecipeDetailsBinding
+import com.example.shareeat.extensions.getCurrentUser
 import com.example.shareeat.model.Model
 import com.squareup.picasso.Picasso
 
@@ -29,14 +31,18 @@ class RecipeDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentRecipeDetailsBinding.inflate(inflater, container, false)
-        recipeId?.let { displayRecipe(it) }
+        recipeId?.let {
+            displayRecipe(it)
+        }
+
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
     }
+
 
     private fun displayRecipe(recipeId: String) {
         Model.shared.getRecipeById(recipeId) { recipe ->
@@ -53,6 +59,17 @@ class RecipeDetailsFragment : Fragment() {
                         .into(binding.recipeDetailImage)
                 }
             }
+            val user = getCurrentUser(requireContext())
+            val userId = user?.first
+            if (userId == recipe.userId) {
+                binding.editButton.visibility = View.VISIBLE
+            }
+            val action =
+                RecipeDetailsFragmentDirections.actionRecipesDetailsFragmentToEditRecipeFragment(
+                    recipeId
+                )
+            binding.editButton.setOnClickListener(Navigation.createNavigateOnClickListener(action))
+
             binding.appBarLayout.visibility = View.VISIBLE
         }
     }

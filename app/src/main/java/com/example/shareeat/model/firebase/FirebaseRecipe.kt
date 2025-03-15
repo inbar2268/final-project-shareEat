@@ -32,7 +32,6 @@ class FirebaseRecipe(private val firebaseModel: FirebaseModel) {
     }
 
 
-
     fun add(recipe: Recipe, callback: EmptyCallback) {
         firebaseModel.database.collection(Constants.Collections.RECIPES)
             .document(recipe.id)
@@ -52,6 +51,12 @@ class FirebaseRecipe(private val firebaseModel: FirebaseModel) {
     }
 
     fun updateRecipe(recipe: Recipe, callback: EmptyCallback) {
+        if (recipe.id.isNullOrEmpty()) {
+            Log.e("FirebaseRecipe", "Cannot update recipe with empty ID")
+            callback()
+            return
+        }
+        Log.d("FirebaseRecipe", "Updating recipe with ID: ${recipe.id}")
         firebaseModel.database.collection(Constants.Collections.RECIPES)
             .document(recipe.id)
             .update(recipe.json)
@@ -59,13 +64,13 @@ class FirebaseRecipe(private val firebaseModel: FirebaseModel) {
                 if (it.isSuccessful) {
                     Log.d("FirebaseRecipe", "Recipe updated: ${recipe.id}")
                 } else {
-                    Log.e("FirebaseRecipe", "Error updating recipe", it.exception)
+                    Log.e("FirebaseUser", "Error updating recipe", it.exception)
                 }
                 callback()
             }
             .addOnFailureListener { exception ->
                 Log.e("FirebaseRecipe", "Error updating recipe", exception)
-                callback()
+                callback() // Call the callback even on failure, but handle it within the callback
             }
     }
 

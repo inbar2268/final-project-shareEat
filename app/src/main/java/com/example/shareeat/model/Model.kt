@@ -107,6 +107,15 @@ class Model private constructor() {
             }
         }
     }
+    fun editRecipe(recipe: Recipe, callback: EmptyCallback) {
+        recipe.lastUpdated = System.currentTimeMillis()
+        firebaseRecipe.updateRecipe(recipe) {
+            executor.execute {
+                database.recipeDao().insertAll(recipe)
+                mainHandler.post { callback() }
+            }
+        }
+    }
 
 
     fun addRecipe(recipe: Recipe, callback: EmptyCallback) {
