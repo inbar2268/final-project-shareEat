@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,8 +40,6 @@ class homeFragment : Fragment() {
         val layoutManager = LinearLayoutManager(context)
         binding?.recipesRecyclerView?.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-
-
         adapter = RecipeRecyclerAdapter(viewModel.recipes.value ?: listOf())
 
         viewModel.recipes.observe(viewLifecycleOwner) {
@@ -65,18 +62,7 @@ class homeFragment : Fragment() {
             }
 
             override fun onItemClick(recipe: Recipe?) {
-//                recipe?.let {
-//                    val action = homeFragmentDirections.actionRecipesFragmentToRecipesDetailsFragment ()
-//                    val bundle = Bundle()
-//                    bundle.putString("recipeId", it.id)
-//                    binding?.root?.let {
-//                        Navigation.findNavController(it).navigate(action.actionId,bundle)
-//                    }
-//                }
                 Log.d("TAG", "On student clicked name: ${recipe?.id}")
-
-//                Navigation.findNavController(view).navigate(R.id.action_studentsListFragment_to_blueFragment)
-
                 recipe?.let {
                     val action =
                         homeFragmentDirections.actionRecipesFragmentToRecipesDetailsFragment(it.id)
@@ -86,9 +72,7 @@ class homeFragment : Fragment() {
                 }
             }
         }
-
         binding?.recipesRecyclerView?.adapter = adapter
-
         return binding?.root
     }
 

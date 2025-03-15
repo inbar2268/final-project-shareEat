@@ -36,7 +36,11 @@
         android:id="@+id/profileFragment"
         android:name="com.example.shareeat.ProfileFragment"
         android:label="Profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_ProfileFragment_to_recipeDetailsFragment"
+            app:destination="@id/recipeDetailsFragment" />
+    </fragment>
 
     <action
         android:id="@+id/action_ProfileFragment_to_signInFragment"
@@ -92,9 +96,9 @@
         android:name="com.example.shareeat.EditRecipeFragment"
         android:label="edit recipe"
         tools:layout="@layout/fragment_edit_recipe">
-    <argument
-        android:name="recipeId"
-        app:argType="string" />
+        <argument
+            android:name="recipeId"
+            app:argType="string" />
     </fragment>
 
     <fragment
