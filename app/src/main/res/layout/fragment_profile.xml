@@ -1,224 +1,210 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-tools:context=".ProfileFragment">
-
-<View
-    android:id="@+id/topBackground"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="120dp"
-    android:background="@drawable/curved_background_vector"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent" />
+    android:layout_height="match_parent"
+    tools:context=".ProfileFragment">
 
-<ImageView
-    android:id="@+id/logoImage"
-    android:layout_width="100dp"
-    android:layout_height="100dp"
-    android:layout_marginTop="0dp"
-    android:src="@drawable/chef_hat_logo"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent" />
-
-<androidx.cardview.widget.CardView
-    android:id="@+id/profileCard"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="32dp"
-    android:layout_marginEnd="32dp"
-    android:layout_marginTop="32dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="4dp"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/logoImage">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <View
+        android:id="@+id/topBackground"
         android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@drawable/curved_background_vector"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Chef hat logo -->
+    <ImageView
+        android:id="@+id/logoImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="0dp"
+        android:src="@drawable/chef_hat_logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/logoutButton"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:layout_margin="16dp"
+        android:text="Logout"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profileImage"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/avatar"
-            app:civ_border_color="#B25E30"
-            app:civ_border_width="2dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <androidx.cardview.widget.CardView
+        android:id="@+id/profileCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="130dp"
+        android:layout_marginEnd="24dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/changePhotoButton"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="116dp"
-            android:layout_marginBottom="36dp"
-            android:text="Change Photo"
-            android:textSize="12sp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/editProfileButton"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
-
-        <TextView
-            android:id="@+id/displayNameText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/emailText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/profileImage"
-            app:layout_constraintTop_toTopOf="@id/profileImage"
-            tools:text="Noam Zedek" />
-
-        <TextView
-            android:id="@+id/emailText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:textColor="#757575"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@id/profileImage"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/profileImage"
-            app:layout_constraintTop_toBottomOf="@id/displayNameText"
-            tools:text="email@example.com" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/displayNameInputLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Display Name"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profileImage">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/displayNameInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/editProfileButton"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="32dp"
-            android:backgroundTint="@color/peach"
-            android:fontFamily="sans-serif-medium"
             android:paddingLeft="10dp"
-            android:paddingTop="10dp"
+            android:paddingTop="8dp"
             android:paddingRight="10dp"
-            android:paddingBottom="12dp"
-            android:text="Edit Profile"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            app:elevation="4dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profileImage"
-            app:strokeColor="@color/colorPrimaryDark"
-            app:strokeWidth="2dp" />
+            android:paddingBottom="8dp">
 
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profileImage"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:src="@drawable/avatar"
+                app:civ_border_color="#B25E30"
+                app:civ_border_width="2dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/saveChangesButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="4dp"
-            android:backgroundTint="@color/peach"
-            android:fontFamily="sans-serif-medium"
-            android:paddingLeft="24dp"
-            android:paddingTop="12dp"
-            android:paddingRight="24dp"
-            android:paddingBottom="12dp"
-            android:text="Save"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:visibility="gone"
-            app:elevation="4dp"
-            app:layout_constraintEnd_toStartOf="@id/cancelButton"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/displayNameInputLayout"
-            app:strokeColor="@color/colorPrimaryDark"
-            app:strokeWidth="2dp" />
+            <TextView
+                android:id="@+id/displayNameText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/emailText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/profileImage"
+                app:layout_constraintTop_toTopOf="@id/profileImage"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="Noam Zedek" />
 
-        <Button
-            android:id="@+id/cancelButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="@color/white"
-            android:fontFamily="sans-serif-medium"
-            android:paddingLeft="24dp"
-            android:paddingTop="12dp"
-            android:paddingRight="24dp"
-            android:paddingBottom="12dp"
-            android:text="Cancel"
-            android:textColor="@color/peach"
-            android:textSize="16sp"
-            android:visibility="gone"
-            app:elevation="4dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/saveChangesButton"
-            app:layout_constraintTop_toBottomOf="@id/displayNameInputLayout"
-            app:strokeColor="@color/colorPrimaryDark"
-            app:strokeWidth="2dp" />
+            <TextView
+                android:id="@+id/emailText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:textColor="#757575"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@id/profileImage"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/profileImage"
+                app:layout_constraintTop_toBottomOf="@id/displayNameText"
+                tools:text="email@example.com" />
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/displayNameInputLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:hint="Full name"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/profileImage"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/profileImage"
+                app:layout_constraintTop_toTopOf="@id/profileImage">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/displayNameInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-<androidx.cardview.widget.CardView
-    android:id="@+id/recipeGridSection"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:layout_margin="32dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="4dp"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/profileCard">
-</androidx.cardview.widget.CardView>
+            <Button
+                android:id="@+id/changePhotoButton"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="90dp"
+                android:layout_height="36dp"
+                android:layout_marginTop="8dp"
+                android:minWidth="0dp"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:text="Change Photo"
+                android:textColor="@color/peach"
+                android:textSize="10sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@id/profileImage"
+                app:layout_constraintStart_toStartOf="@id/profileImage"
+                app:layout_constraintTop_toBottomOf="@+id/profileImage" />
 
-<ProgressBar
-    android:id="@+id/progressBar"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:visibility="gone"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/editProfileButton"
+                android:layout_width="110dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/peach"
+                android:fontFamily="sans-serif-medium"
+                android:paddingVertical="8dp"
+                android:text="Edit Profile"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                app:cornerRadius="8dp"
+                app:elevation="4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profileImage" />
 
-<Button
-    android:id="@+id/logoutButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_margin="16dp"
-    android:text="Logout"
-    android:textColor="#B25E30"
-    style="@style/Widget.MaterialComponents.Button.TextButton"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toTopOf="parent" />
+            <Button
+                android:id="@+id/saveChangesButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="4dp"
+                android:backgroundTint="@color/peach"
+                android:fontFamily="sans-serif-medium"
+                android:paddingVertical="0dp"
+                android:text="Save"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:visibility="gone"
+                app:cornerRadius="8dp"
+                app:elevation="4dp"
+                app:layout_constraintEnd_toStartOf="@id/guideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/changePhotoButton" />
+
+            <Button
+                android:id="@+id/cancelButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/white"
+                android:fontFamily="sans-serif-medium"
+                android:paddingVertical="0dp"
+                android:text="Cancel"
+                android:textColor="@color/peach"
+                android:textSize="14sp"
+                android:visibility="gone"
+                app:cornerRadius="8dp"
+                app:elevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/guideline"
+                app:layout_constraintTop_toBottomOf="@id/changePhotoButton"
+                app:strokeColor="@color/peach"
+                app:strokeWidth="1dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
