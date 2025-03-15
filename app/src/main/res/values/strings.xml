@@ -12,4 +12,6 @@
     <string name="meal_description">Meal Description</string>
     <string name="meal_instructions">Instructions</string>
     <string name="tap_to_add_photo">Tap the camera icon to add a photo</string>
+    <string name="search_icon">Search</string>
+    <string name="user_profile_image">User Profile Image</string>
 </resources>
