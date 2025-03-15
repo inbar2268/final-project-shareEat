@@ -4,11 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.example.shareeat.databinding.FragmentRecipeDetailsBinding
 import com.example.shareeat.extensions.getCurrentUser
 import com.example.shareeat.model.Model
+import com.example.shareeat.model.Recipe
 import com.squareup.picasso.Picasso
 
 class RecipeDetailsFragment : Fragment() {
@@ -34,7 +37,6 @@ class RecipeDetailsFragment : Fragment() {
         recipeId?.let {
             displayRecipe(it)
         }
-
 
         return binding.root
     }
@@ -63,6 +65,10 @@ class RecipeDetailsFragment : Fragment() {
             val userId = user?.first
             if (userId == recipe.userId) {
                 binding.editButton.visibility = View.VISIBLE
+                binding.deleteRecipeButton.visibility = View.VISIBLE
+                binding.deleteRecipeButton.setOnClickListener {
+                    deleteRecipe(recipe)
+                }
             }
             val action =
                 RecipeDetailsFragmentDirections.actionRecipesDetailsFragmentToEditRecipeFragment(
@@ -71,6 +77,17 @@ class RecipeDetailsFragment : Fragment() {
             binding.editButton.setOnClickListener(Navigation.createNavigateOnClickListener(action))
 
             binding.appBarLayout.visibility = View.VISIBLE
+
+
+        }
+    }
+
+    private fun deleteRecipe(recipe: Recipe) {
+        Model.shared.deleteRecipe(recipe) {
+            requireActivity().runOnUiThread {
+                Toast.makeText(requireContext(), "Recipe Deleted!", Toast.LENGTH_SHORT).show()
+                findNavController().popBackStack()
+            }
         }
     }
 }

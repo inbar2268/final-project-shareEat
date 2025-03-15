@@ -148,7 +148,6 @@
                 app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/infoCard">
@@ -172,23 +171,33 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:textAppearance="?attr/textAppearanceBody1"
-                        tools:text="1. שלב ראשון בהכנה\n2. שלב שני בהכנה\n3. שלב שלישי בהכנה" />
+                        android:textAppearance="?attr/textAppearanceBody1" />
                 </LinearLayout>
+
             </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/deleteRecipeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="Delete Recipe"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                app:backgroundTint="#F44336"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/instructionsCard" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Floating Action Button for favorites -->
-    <!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-    <!--        android:id="@+id/favoriteButton"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_gravity="bottom|end"-->
-    <!--        android:layout_margin="16dp"-->
-    <!--        android:contentDescription="@string/favorite_recipe"-->
-    <!--        android:src="@drawable/ic_favorite_border"-->
-    <!--        app:backgroundTint="#F5D0B9" />-->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/editButton"
         android:layout_width="wrap_content"
@@ -197,8 +206,7 @@
         android:layout_margin="16dp"
         android:contentDescription="@string/edit"
         android:src="@drawable/ic_edit"
-        app:backgroundTint="#F5D0B9"
         android:visibility="gone"
-        />
+        app:backgroundTint="#F5D0B9" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
