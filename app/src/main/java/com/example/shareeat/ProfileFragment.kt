@@ -1,4 +1,5 @@
 package com.example.shareeat
+
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,6 +19,12 @@ import com.example.shareeat.model.User.Companion.getUserFromLocalStorage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import android.content.Intent
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.shareeat.adapters.OnItemClickListener
+import com.example.shareeat.adapters.RecipeRecyclerAdapter
+import com.example.shareeat.model.Recipe
 
 class ProfileFragment : Fragment() {
     private var binding: FragmentProfileBinding? = null
@@ -25,6 +32,9 @@ class ProfileFragment : Fragment() {
     private var isEditMode = false
     private var currentPhotoUrl: String? = null
     private lateinit var imageHandler: ImageSelector
+    private val viewModel: RecipesViewModel by viewModels()
+    private var adapter: RecipeRecyclerAdapter? = null
+    var userRecipes: List<Recipe> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +48,6 @@ class ProfileFragment : Fragment() {
         binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
 
         imageHandler = ImageSelector(this)
-
         return binding?.root
     }
 
@@ -76,6 +85,47 @@ class ProfileFragment : Fragment() {
         binding?.changePhotoButton?.setOnClickListener {
             imageHandler.showImagePickerDialog()
         }
+
+        binding?.recipesRecyclerView?.setHasFixedSize(true)
+        val layoutManager = LinearLayoutManager(context)
+        binding?.recipesRecyclerView?.layoutManager =
+            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+
+        adapter = RecipeRecyclerAdapter(userRecipes )
+
+        viewModel.recipes.observe(viewLifecycleOwner) { recipes ->
+            val currentUserId = getUserId()
+            userRecipes = recipes?.filter { it.userId == currentUserId } ?: emptyList()
+            adapter?.update(userRecipes)
+            adapter?.notifyDataSetChanged()
+            binding?.progressBar?.visibility = View.GONE
+        }
+
+        binding?.swipeToRefresh?.setOnRefreshListener {
+            viewModel.refreshAllRecipes()
+        }
+
+        Model.shared.loadingState.observe(viewLifecycleOwner) { state ->
+            binding?.swipeToRefresh?.isRefreshing = state == Model.LoadingState.LOADING
+        }
+
+        adapter?.listener = object : OnItemClickListener {
+            override fun onItemClick(position: Int) {
+                Log.d("TAG", "On click Activity listener on position $position")
+            }
+
+            override fun onItemClick(recipe: Recipe?) {
+                Log.d("TAG", "On student clicked name: ${recipe?.id}")
+                recipe?.let {
+                    val action =
+                        ProfileFragmentDirections.actionProfileFragmentToRecipeDetailsFragment(it.id)
+                    binding?.root?.let {
+                        Navigation.findNavController(it).navigate(action)
+                    }
+                }
+            }
+        }
+        binding?.recipesRecyclerView?.adapter = adapter
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -113,7 +163,11 @@ class ProfileFragment : Fragment() {
                         binding?.profileImage?.setImageResource(R.drawable.image_placeholder)
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Failed to load user profile", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Failed to load user profile",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         } else {
@@ -206,8 +260,17 @@ class ProfileFragment : Fragment() {
                             binding?.progressBar?.visibility = View.GONE
                             binding?.saveChangesButton?.isEnabled = true
                             binding?.cancelButton?.isEnabled = true
-                            Toast.makeText(requireContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show()
-                            User.saveUserToLocalStorage(requireContext(), currentUser.uid, currentUser.email ?: "",currentUser.displayName ?: "" )
+                            Toast.makeText(
+                                requireContext(),
+                                "Profile updated successfully",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            User.saveUserToLocalStorage(
+                                requireContext(),
+                                currentUser.uid,
+                                currentUser.email ?: "",
+                                currentUser.displayName ?: ""
+                            )
                             toggleEditMode(false)
                             displayUserInfo()
                         }
@@ -230,5 +293,18 @@ class ProfileFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getAllRecipes()
+    }
+
+    private fun getAllRecipes() {
+        binding?.progressBar?.visibility = View.VISIBLE
+        viewModel.refreshAllRecipes()
+        val currentUserId =getUserId();
+        userRecipes = viewModel.recipes.value?.filter { it.userId == currentUserId } ?: emptyList()
+
     }
 }
