@@ -1,19 +1,18 @@
 package com.example.shareeat
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
-import com.example.shareeat.databinding.FragmentProfileBinding
+import com.example.shareeat.databinding.FragmentUserProfileBinding
 import com.example.shareeat.model.Model
 import com.example.shareeat.model.User
 
-class ProfileFragment : Fragment() {
-    private var binding: FragmentProfileBinding? = null
+class UserProfileFragment : Fragment() {
+    private var binding: FragmentUserProfileBinding? = null
     private var userId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +27,7 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentProfileBinding.inflate(inflater, container, false)
+        binding = FragmentUserProfileBinding.inflate(inflater, container, false)
         return binding?.root
     }
 

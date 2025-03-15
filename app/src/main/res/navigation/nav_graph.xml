@@ -37,6 +37,7 @@
         android:name="com.example.shareeat.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_profile" />
+
     <action
         android:id="@+id/action_ProfileFragment_to_signInFragment"
         app:destination="@id/signInFragment"
@@ -44,25 +45,40 @@
         app:popUpToInclusive="true" />
 
     <fragment
+        android:id="@+id/userProfileFragment"
+        android:name="com.example.shareeat.UserProfileFragment"
+        android:label="User Profile"
+        tools:layout="@layout/fragment_user_profile">
+        <argument
+            android:name="userId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.shareeat.homeFragment"
-        android:label="home"
-        tools:layout="@layout/fragment_home"/>
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_homeFragment_to_recipeDetailsFragment"
+            app:destination="@id/recipeDetailsFragment">
+            <argument
+                android:name="recipeId"
+                app:argType="string" />
+        </action>
+    </fragment>
 
     <fragment
         android:id="@+id/uploadRecipeFragment"
         android:name="com.example.shareeat.UploadRecipeFragment"
         android:label="Upload Recipe"
-        tools:layout="@layout/fragment_upload_recipe"/>
-
-    <action
-        android:id="@+id/action_recipesFragment_to_recipesDetailsFragment"
-        app:destination="@id/recipeDetailsFragment" />
+        tools:layout="@layout/fragment_upload_recipe" />
 
     <fragment
         android:id="@+id/recipeDetailsFragment"
         android:name="com.example.shareeat.RecipeDetailsFragment"
-        android:label="recipe details"
+        android:label="Recipe Details"
         tools:layout="@layout/fragment_recipe_details">
         <argument
             android:name="recipeId"
@@ -82,5 +98,22 @@
                 android:name="recipeId"
                 app:argType="string" />
         </action>
+
+        <action
+            android:id="@+id/action_searchFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment">
+            <argument
+                android:name="userId"
+                app:argType="string" />
+        </action>
     </fragment>
+
+    <action
+        android:id="@+id/action_recipesFragment_to_recipesDetailsFragment"
+        app:destination="@id/recipeDetailsFragment">
+        <argument
+            android:name="recipeId"
+            app:argType="string" />
+    </action>
+
 </navigation>
