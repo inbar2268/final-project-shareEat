@@ -1,4 +1,5 @@
 package com.example.shareeat
+
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -18,7 +19,7 @@ import com.squareup.picasso.Picasso
 import java.util.*
 
 class EditRecipeFragment : Fragment() {
-    var recipeId:String?=""
+    var recipeId: String? = ""
     private lateinit var recipeImagePreview: ImageView
     private lateinit var addPhotoText: TextView
     private lateinit var cameraIcon: ImageView
@@ -35,7 +36,6 @@ class EditRecipeFragment : Fragment() {
     private lateinit var imageHandler: ImageSelector
     private lateinit var recipe: Recipe
     private var imageChanged = false
-
 
 
     override fun onCreateView(
@@ -165,6 +165,7 @@ class EditRecipeFragment : Fragment() {
             title = title,
             description = description,
             instructions = instructions,
+            imageUrl = recipe.imageUrl,
             userId = recipe.userId,
             userName = recipe.userName,
             timestamp = System.currentTimeMillis(),
