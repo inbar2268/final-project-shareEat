@@ -17,7 +17,11 @@ data class Recipe(
     val userId: String = "",
     val userName: String = "",
     var timestamp: Long? = null,
-    var lastUpdated: Long? = null
+    var lastUpdated: Long? = null,
+
+    var latitude: Double? = null,
+    var longitude: Double? = null,
+    var geohash: String? = null
 ) {
 
     companion object {
@@ -31,7 +35,6 @@ data class Recipe(
                     }
             }
 
-        // Firestore Keys
         const val ID_KEY = "id"
         const val TITLE_KEY = "title"
         const val DESCRIPTION_KEY = "description"
@@ -42,6 +45,10 @@ data class Recipe(
         const val TIMESTAMP = "timestamp"
         const val LAST_UPDATED = "lastUpdated"
         const val LOCAL_LAST_UPDATED = "localRecipeLastUpdated"
+
+        const val LATITUDE_KEY = "latitude"
+        const val LONGITUDE_KEY = "longitude"
+        const val GEOHASH_KEY = "geohash"
 
         fun fromJSON(json: Map<String, Any>): Recipe {
             val id = json[ID_KEY] as? String ?: ""
@@ -55,6 +62,10 @@ data class Recipe(
             val timestampValue = json[TIMESTAMP] as? Timestamp
             val lastUpdatedValue = json[LAST_UPDATED] as? Timestamp
 
+            val latitude = json[LATITUDE_KEY] as? Double
+            val longitude = json[LONGITUDE_KEY] as? Double
+            val geohash = json[GEOHASH_KEY] as? String
+
             return Recipe(
                 id = id,
                 title = title,
@@ -63,12 +74,14 @@ data class Recipe(
                 instructions = instructions,
                 userId = userId,
                 userName = userName,
-                timestamp = timestampValue?.toDate()?.time,  // ✅ Now included
-                lastUpdated = lastUpdatedValue?.toDate()?.time
+                timestamp = timestampValue?.toDate()?.time,
+                lastUpdated = lastUpdatedValue?.toDate()?.time,
+                latitude = latitude,
+                longitude = longitude,
+                geohash = geohash
             )
         }
     }
-
 
     val json: Map<String, Any>
         get() = hashMapOf(
@@ -80,6 +93,10 @@ data class Recipe(
             USER_ID_KEY to userId,
             USER_NAME_KEY to userName,
             TIMESTAMP to FieldValue.serverTimestamp(),
-            LAST_UPDATED to FieldValue.serverTimestamp()
+            LAST_UPDATED to FieldValue.serverTimestamp(),
+
+            LATITUDE_KEY to (latitude ?: 0.0),
+            LONGITUDE_KEY to (longitude ?: 0.0),
+            GEOHASH_KEY to (geohash ?: "")
         )
 }

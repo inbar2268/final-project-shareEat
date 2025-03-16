@@ -83,6 +83,7 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.converter.gson)
 
+    implementation (libs.geofire.android)
     implementation(platform(libs.firebase.bom))
 
     implementation(libs.androidx.room.runtime)
@@ -94,6 +95,7 @@ dependencies {
 
 
     implementation(libs.cloudinary.android.v231)
+    implementation(libs.play.services.location)
 
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
