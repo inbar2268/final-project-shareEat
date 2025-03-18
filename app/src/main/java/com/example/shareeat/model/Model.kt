@@ -11,13 +11,13 @@ import com.cloudinary.utils.ObjectUtils
 import com.example.shareeat.BuildConfig
 import com.example.shareeat.base.EmptyCallback
 import com.example.shareeat.base.RecipeCallback
-import com.example.shareeat.base.RecipesCallback
 import com.example.shareeat.model.dao.AppLocalDb
 import com.example.shareeat.model.dao.AppLocalDbRepository
 import com.example.shareeat.model.firebase.FirebaseModel
 import com.example.shareeat.model.firebase.FirebaseRecipe
 import com.example.shareeat.model.firebase.FirebaseUser
 import java.io.ByteArrayOutputStream
+import java.util.UUID
 import java.util.concurrent.Executors
 
 class Model private constructor() {
@@ -38,7 +38,7 @@ class Model private constructor() {
     val users: LiveData<List<User>> = database.userDao().getAllUser()
     val recipes: LiveData<List<Recipe>> = database.recipeDao().getAllRecipes()
     val loadingState: MutableLiveData<LoadingState> = MutableLiveData()
-
+    val apiRecipes: MutableLiveData<List<Recipe>> = MutableLiveData()
     private val firebaseModel = FirebaseModel()
     private val firebaseUser = FirebaseUser(firebaseModel)
     private val firebaseRecipe = FirebaseRecipe(firebaseModel)
@@ -107,6 +107,7 @@ class Model private constructor() {
             }
         }
     }
+
     fun editRecipe(recipe: Recipe, callback: EmptyCallback) {
         recipe.lastUpdated = System.currentTimeMillis()
         firebaseRecipe.updateRecipe(recipe) {
@@ -150,7 +151,11 @@ class Model private constructor() {
     /**
      * Uploads an image to Cloudinary and returns its URL.
      */
-    private fun uploadImageToCloudinary(folder: String, image: Bitmap, callback: (String?) -> Unit) {
+    private fun uploadImageToCloudinary(
+        folder: String,
+        image: Bitmap,
+        callback: (String?) -> Unit
+    ) {
         Log.d("Cloudinary Upload", "Starting upload process...")
 
         val stream = ByteArrayOutputStream()
@@ -175,7 +180,8 @@ class Model private constructor() {
         executor.execute {
             try {
                 Log.d("Cloudinary Upload", "Uploading image to Cloudinary...")
-                val uploadResult = cloudinary.uploader().upload(imageData, ObjectUtils.asMap("folder", folder))
+                val uploadResult =
+                    cloudinary.uploader().upload(imageData, ObjectUtils.asMap("folder", folder))
 
                 Log.d("Cloudinary Upload", "Upload response received: $uploadResult")
                 val imageUrl = uploadResult["secure_url"] as? String
@@ -208,6 +214,7 @@ class Model private constructor() {
             Storage.FIREBASE -> {
                 uploadImageToFirebase(image, name, callback)
             }
+
             Storage.CLOUDINARY -> {
                 uploadImageToCloudinary(folder, image, callback)
             }
@@ -243,4 +250,49 @@ class Model private constructor() {
             }
         }
     }
+
+    fun getRecipeFromApiById(id: String):
+            Recipe? {
+        return apiRecipes.value?.find { it.id == id }
+    }
+
+    fun getAllApiRecipes() {
+        executor.execute {
+            try {
+                val request = RecipesClient.recipesApiClient.getRecipes()
+                val response = request.execute()
+
+                if (response.isSuccessful) {
+                    val recipes = response.body()
+                    Log.e(
+                        "TAG",
+                        "Fetched recipes!.. with total number of movies ${recipes?.result?.size ?: 0}"
+                    )
+                    val result = recipes?.result ?: emptyList()
+                    val recipesFromTastyApi = result.map { item ->
+                        val instructionTexts = item.instructions.map { it.displayText }
+                        val allInstructions = instructionTexts.joinToString("\n")
+                        Recipe(
+                            id = UUID.randomUUID().toString(),
+                            title = item.title,
+                            description = item.description,
+                            instructions = allInstructions,
+                            imageUrl = item.imageUrl,
+                            userId = "0",
+                            userName = "SHAREEAT USER",
+                            timestamp = System.currentTimeMillis(),
+                            lastUpdated = System.currentTimeMillis()
+                        )
+                    }
+                    this.apiRecipes.postValue(recipesFromTastyApi)
+                } else {
+                    Log.e("TAG", "Failed to fetch recipe!")
+                }
+            } catch (e: Exception) {
+                Log.e("TAG", "Failed to fetch recipes! with excpetio ${e}")
+            }
+        }
+    }
+
 }
+

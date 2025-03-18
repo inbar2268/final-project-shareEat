@@ -15,6 +15,7 @@ import com.example.shareeat.adapters.OnItemClickListener
 import com.example.shareeat.adapters.RecipeRecyclerAdapter
 import com.example.shareeat.model.Model
 import com.example.shareeat.model.Recipe
+import java.util.UUID
 
 
 class homeFragment : Fragment() {
@@ -22,6 +23,7 @@ class homeFragment : Fragment() {
 
     private val viewModel: RecipesViewModel by viewModels()
     private var adapter: RecipeRecyclerAdapter? = null
+    private var recipesFromTastyApi: List<Recipe> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,13 +45,14 @@ class homeFragment : Fragment() {
         adapter = RecipeRecyclerAdapter(viewModel.recipes.value ?: listOf())
 
         viewModel.recipes.observe(viewLifecycleOwner) {
-            adapter?.update(it)
+            adapter?.update(it+recipesFromTastyApi)
             adapter?.notifyDataSetChanged()
             binding?.progressBar?.visibility = View.GONE
         }
 
         binding?.swipeToRefresh?.setOnRefreshListener {
             viewModel.refreshAllRecipes()
+            viewModel.fechRecipes()
         }
 
         Model.shared.loadingState.observe(viewLifecycleOwner) { state ->
@@ -90,5 +93,15 @@ class homeFragment : Fragment() {
     private fun getAllRecipes() {
         binding?.progressBar?.visibility = View.VISIBLE
         viewModel.refreshAllRecipes()
+        apiRecipesToRecipes()
+    }
+
+    private fun apiRecipesToRecipes() {
+        viewModel.fechRecipes()
+        viewModel.apiRecipes.observe(viewLifecycleOwner) { recipes ->
+            recipesFromTastyApi = recipes
+
+        }
+
     }
 }

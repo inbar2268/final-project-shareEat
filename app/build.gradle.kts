@@ -25,18 +25,18 @@ android {
         buildConfigField("String", "API_SECRET", "\"${project.properties["API_SECRET"] ?: ""}\"")
         buildConfigField(
             "String",
-            "TMDB_BASE_URL",
-            "\"${project.properties["TMDB_BASE_URL"] ?: ""}\""
+            "TASTY_BASE_URL",
+            "\"${project.properties["TASTY_BASE_URL"] ?: ""}\""
         )
         buildConfigField(
             "String",
-            "TMDB_POSTER_BASE_URL",
-            "\"${project.properties["TMDB_POSTER_BASE_URL"] ?: ""}\""
+            "TASTY_HOST",
+            "\"${project.properties["TASTY_HOST"] ?: ""}\""
         )
         buildConfigField(
             "String",
-            "TMDB_ACCESS_TOKEN",
-            "\"${project.properties["TMDB_ACCESS_TOKEN"] ?: ""}\""
+            "TASTY_ACCESS_TOKEN",
+            "\"${project.properties["TASTY_ACCESS_TOKEN"] ?: ""}\""
         )
 
     }
@@ -109,5 +109,8 @@ dependencies {
     implementation(libs.glide)
 
 
+    implementation(libs.retrofit)
+    implementation(libs.gson)
+    implementation(libs.converter.gson)
 
 }
