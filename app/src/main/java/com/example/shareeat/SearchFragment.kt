@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,8 +19,18 @@ import com.example.shareeat.adapters.SearchUserAdapter
 import com.example.shareeat.model.Model
 import com.example.shareeat.model.Recipe
 import com.example.shareeat.model.User
+import com.example.shareeat.utils.GeohashUtils
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.firestore.FirebaseFirestore
 
-class SearchFragment : Fragment() {
+
+class SearchFragment : Fragment() , OnMapReadyCallback {
 
     private lateinit var searchEditText: EditText
     private lateinit var searchIcon: ImageView
@@ -28,13 +39,18 @@ class SearchFragment : Fragment() {
     private lateinit var tabMap: TextView
     private lateinit var searchRecyclerView: RecyclerView
     private lateinit var progressBar: View
+    private lateinit var mapView: MapView
 
     private lateinit var recipeAdapter: SearchRecipeAdapter
     private lateinit var userAdapter: SearchUserAdapter
 
     private var allRecipes: List<Recipe> = emptyList()
     private var allUsers: List<User> = emptyList()
+    private var googleMap: GoogleMap? = null
+    private val visibleMarkers = mutableMapOf<String, Marker>()
     private var selectedTabIndex: Int = 0 // 0 = People, 1 = Recipes, 2 = Map
+    private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,6 +65,8 @@ class SearchFragment : Fragment() {
         restoreSelectedTab()
         setupSearchListeners()
         setupTabListeners()
+        initializeMapView(savedInstanceState)
+
     }
 
     private fun initializeViews(view: View) {
@@ -59,6 +77,7 @@ class SearchFragment : Fragment() {
         tabMap = view.findViewById(R.id.tabMap)
         searchRecyclerView = view.findViewById(R.id.searchRecyclerView)
         progressBar = view.findViewById(R.id.progressBar)
+        mapView = view.findViewById(R.id.mapView)
 
         recipeAdapter = SearchRecipeAdapter(emptyList(), ::onRecipeClick)
         userAdapter = SearchUserAdapter(emptyList(), ::onUserClick)
@@ -79,6 +98,8 @@ class SearchFragment : Fragment() {
             if (recipes.isEmpty()) Model.shared.refreshAllRecipes()
             allRecipes = recipes
             updateDisplayedData()
+            updateMapWithRecipes()
+
         }
 
         Model.shared.users.observe(viewLifecycleOwner) { users ->
@@ -106,6 +127,11 @@ class SearchFragment : Fragment() {
         }
     }
 
+    private fun initializeMapView(savedInstanceState: Bundle?) {
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync(this)
+    }
+
     private fun setupTabListeners() {
         tabPeople.setOnClickListener { selectTab(tabPeople, 0) }
         tabRecipes.setOnClickListener { selectTab(tabRecipes, 1) }
@@ -125,10 +151,28 @@ class SearchFragment : Fragment() {
     }
 
     private fun updateDisplayedData() {
-        searchRecyclerView.adapter = when (selectedTabIndex) {
-            0 -> userAdapter.also { it.setUsers(allUsers) }
-            1 -> recipeAdapter.also { it.setRecipes(allRecipes) }
-            else -> null
+        when (selectedTabIndex) {
+            0 -> {
+                searchRecyclerView.visibility = View.VISIBLE
+                mapView.visibility = View.GONE
+                searchEditText.visibility = View.VISIBLE
+                searchIcon.visibility = View.VISIBLE
+                searchRecyclerView.adapter = userAdapter.also { it.setUsers(allUsers) }
+            }
+            1 -> {
+                searchRecyclerView.visibility = View.VISIBLE
+                mapView.visibility = View.GONE
+                searchEditText.visibility = View.VISIBLE
+                searchIcon.visibility = View.VISIBLE
+                searchRecyclerView.adapter = recipeAdapter.also { it.setRecipes(allRecipes) }
+            }
+            2 -> {
+                searchRecyclerView.visibility = View.GONE
+                mapView.visibility = View.VISIBLE
+                searchEditText.visibility = View.GONE
+                searchIcon.visibility = View.GONE
+                updateMapWithRecipes()
+            }
         }
     }
 
@@ -190,4 +234,177 @@ class SearchFragment : Fragment() {
             2 -> selectTab(tabMap, 2)
         }
     }
+
+    override fun onMapReady(map: GoogleMap) {
+        googleMap = map
+
+        googleMap?.uiSettings?.apply {
+            isZoomControlsEnabled = true
+            isCompassEnabled = true
+            isMapToolbarEnabled = true
+        }
+
+//        googleMap?.setOnInfoWindowClickListener { marker ->
+//            val clickedRecipe = allRecipes.find {
+//                it.latitude != null && it.longitude != null &&
+//                        LatLng(it.latitude!!, it.longitude!!) == marker.position &&
+//                        it.title == marker.title
+//            }
+//
+//            clickedRecipe?.let { onRecipeClick(it) }
+//        }
+        googleMap?.setOnInfoWindowClickListener { marker ->
+            val recipeId = visibleMarkers.entries.find { it.value == marker }?.key
+            recipeId?.let { id ->
+                val recipe = allRecipes.find { it.id == id }
+                recipe?.let { onRecipeClick(it) }
+            }
+        }
+
+        if (selectedTabIndex == 2) {
+            updateMapWithRecipes()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mapView.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView.onResume()
+    }
+
+    override fun onPause() {
+        mapView.onPause()
+        super.onPause()
+    }
+
+    override fun onStop() {
+        mapView.onStop()
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        mapView.onDestroy()
+        super.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        mapView.onLowMemory()
+        super.onLowMemory()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mapView.onSaveInstanceState(outState)
+    }
+
+    private fun updateMapWithRecipes() {
+        if (googleMap == null) return
+
+        val visibleRegion = googleMap?.projection?.visibleRegion
+        if (visibleRegion == null) {
+            googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(32.0, 34.8), 7f))
+            return
+        }
+
+        val bounds = visibleRegion.latLngBounds
+
+        val zoomLevel = googleMap?.cameraPosition?.zoom ?: 10f
+        val precision = GeohashUtils.getGeohashPrecision(zoomLevel)
+
+        val geohashRanges = GeohashUtils.getGeohashRanges(bounds, precision)
+
+        if (zoomLevel <= 3) {
+            googleMap?.clear()
+            visibleMarkers.clear()
+
+            allRecipes.forEach { recipe ->
+                if (recipe.latitude != null && recipe.longitude != null) {
+                    addMarkerForRecipe(recipe)
+                }
+            }
+
+            Log.d("SearchFragment", "Map updated - showing all ${visibleMarkers.size} recipes")
+            return
+        }
+
+        googleMap?.clear()
+        visibleMarkers.clear()
+
+        val visibleRecipes = allRecipes.filter { recipe ->
+            if (recipe.latitude == null || recipe.longitude == null || recipe.geohash == null) {
+                return@filter false
+            }
+
+            val geohash = recipe.geohash ?: return@filter false
+
+            if (precision <= 2) {
+                val isInGeohashRange = geohashRanges.any { (start, end) ->
+                    geohash.startsWith(start.first()) ||
+                            (geohash >= start && geohash <= end)
+                }
+
+                return@filter isInGeohashRange
+            }
+
+            val isInGeohashRange = geohashRanges.any { (start, end) ->
+                val truncatedGeohash = if (geohash.length > precision) {
+                    geohash.substring(0, precision)
+                } else {
+                    geohash
+                }
+
+                truncatedGeohash >= start && truncatedGeohash <= end
+            }
+
+            if (isInGeohashRange) {
+                val position = LatLng(recipe.latitude!!, recipe.longitude!!)
+                return@filter GeohashUtils.isPointInBounds(position, bounds)
+            }
+
+            false
+        }
+
+        for (recipe in visibleRecipes) {
+            addMarkerForRecipe(recipe)
+        }
+
+        Log.d("SearchFragment", "Map updated - ${visibleMarkers.size} recipes visible")
+
+//        googleMap?.setOnInfoWindowClickListener { marker ->
+//            val recipeId = visibleMarkers.entries.find { it.value == marker }?.key
+//            recipeId?.let { id ->
+//                val recipe = allRecipes.find { it.id == id }
+//                recipe?.let { onRecipeClick(it) }
+//            }
+//        }
+
+        // Debounce the camera idle listener to prevent too many updates
+        googleMap?.setOnCameraIdleListener {
+            handler.removeCallbacksAndMessages(null)
+            handler.postDelayed({
+                updateMapWithRecipes()
+            }, 300) // 300ms debounce
+        }
+    }
+
+    private fun addMarkerForRecipe(recipe: Recipe) {
+        val position = LatLng(recipe.latitude!!, recipe.longitude!!)
+
+        val marker = googleMap?.addMarker(
+            MarkerOptions()
+                .position(position)
+                .title(recipe.title)
+        )
+
+        if (marker != null) {
+            visibleMarkers[recipe.id] = marker
+        }
+    }
+
+
 }
+
