@@ -2,7 +2,6 @@ package com.example.shareeat.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.shareeat.adapters.RecipeViewHolder
 import com.example.shareeat.databinding.ItemRecipeBinding
 import com.example.shareeat.model.Recipe
 

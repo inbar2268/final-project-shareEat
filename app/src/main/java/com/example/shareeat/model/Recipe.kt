@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.example.shareeat.base.MyApplication
+import com.google.gson.annotations.SerializedName
 
 @Entity
 data class Recipe(

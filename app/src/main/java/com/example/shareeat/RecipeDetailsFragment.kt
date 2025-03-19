@@ -35,7 +35,7 @@ class RecipeDetailsFragment : Fragment() {
     ): View {
         _binding = FragmentRecipeDetailsBinding.inflate(inflater, container, false)
         recipeId?.let {
-            displayRecipe(it)
+            getRecipe(it)
         }
 
         return binding.root
@@ -45,41 +45,51 @@ class RecipeDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
-
-    private fun displayRecipe(recipeId: String) {
-        Model.shared.getRecipeById(recipeId) { recipe ->
-            binding.recipeDetailTitle.text = recipe?.title
-            binding.recipeDetailDescription.text = recipe?.description
-            binding.recipeDetailInstructions.text = recipe?.instructions
-            binding.recipeDetailAuthor.text = recipe?.userName
-
-            recipe?.imageUrl?.let {
-                if (it.isNotBlank()) {
-                    Picasso.get()
-                        .load(it)
-                        .placeholder(R.drawable.food_placeholder)
-                        .into(binding.recipeDetailImage)
-                }
+    private fun getRecipe(recipeId: String) {
+        var recipe = Model.shared.getRecipeFromApiById(recipeId);
+        if (recipe == null) {
+            Model.shared.getRecipeById(recipeId) { fireBaseRecipe ->
+                displayRecipe(fireBaseRecipe)
             }
-            val user = getCurrentUser(requireContext())
-            val userId = user?.first
-            if (userId == recipe.userId) {
-                binding.editButton.visibility = View.VISIBLE
-                binding.deleteRecipeButton.visibility = View.VISIBLE
-                binding.deleteRecipeButton.setOnClickListener {
-                    deleteRecipe(recipe)
-                }
-            }
-            val action =
-                RecipeDetailsFragmentDirections.actionRecipesDetailsFragmentToEditRecipeFragment(
-                    recipeId
-                )
-            binding.editButton.setOnClickListener(Navigation.createNavigateOnClickListener(action))
-
-            binding.appBarLayout.visibility = View.VISIBLE
-
+        } else {
+            displayRecipe(recipe)
 
         }
+    }
+
+
+    private fun displayRecipe(recipe: Recipe) {
+
+        binding.recipeDetailTitle.text = recipe?.title
+        binding.recipeDetailDescription.text = recipe?.description
+        binding.recipeDetailInstructions.text = recipe?.instructions
+        binding.recipeDetailAuthor.text = recipe?.userName
+
+        recipe?.imageUrl?.let {
+            if (it.isNotBlank()) {
+                Picasso.get()
+                    .load(it)
+                    .placeholder(R.drawable.food_placeholder)
+                    .into(binding.recipeDetailImage)
+            }
+        }
+        val user = getCurrentUser(requireContext())
+        val userId = user?.first
+        if (userId == recipe.userId) {
+            binding.editButton.visibility = View.VISIBLE
+            binding.deleteRecipeButton.visibility = View.VISIBLE
+            binding.deleteRecipeButton.setOnClickListener {
+                deleteRecipe(recipe)
+            }
+        }
+        val action =
+            RecipeDetailsFragmentDirections.actionRecipesDetailsFragmentToEditRecipeFragment(
+                recipe.id
+            )
+        binding.editButton.setOnClickListener(Navigation.createNavigateOnClickListener(action))
+
+        binding.appBarLayout.visibility = View.VISIBLE
+
     }
 
     private fun deleteRecipe(recipe: Recipe) {
