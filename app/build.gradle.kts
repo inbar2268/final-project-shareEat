@@ -83,6 +83,7 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.converter.gson)
 
+    implementation (libs.geofire.android)
     implementation(platform(libs.firebase.bom))
 
     implementation(libs.androidx.room.runtime)
@@ -94,6 +95,7 @@ dependencies {
 
 
     implementation(libs.cloudinary.android.v231)
+    implementation(libs.play.services.location)
 
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
@@ -108,9 +110,12 @@ dependencies {
     implementation(libs.circleimageview)
     implementation(libs.glide)
 
-
     implementation(libs.retrofit)
     implementation(libs.gson)
     implementation(libs.converter.gson)
 
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.android.gms:play-services-location:21.1.0")
+    implementation("com.google.maps.android:android-maps-utils:2.3.0")
+    implementation("ch.hsr:geohash:1.4.0")
 }

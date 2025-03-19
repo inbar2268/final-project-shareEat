@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.example.shareeat.model.Model
 import com.example.shareeat.model.Recipe
 import com.example.shareeat.model.ImageSelector
@@ -19,7 +18,7 @@ import com.squareup.picasso.Picasso
 import java.util.*
 
 class EditRecipeFragment : Fragment() {
-    var recipeId: String? = ""
+    private var recipeId: String? = null
     private lateinit var recipeImagePreview: ImageView
     private lateinit var addPhotoText: TextView
     private lateinit var cameraIcon: ImageView
@@ -27,29 +26,25 @@ class EditRecipeFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
 
     private lateinit var titleTextInput: TextInputEditText
-    private lateinit var titleTextInputLayout: TextInputLayout
     private lateinit var mealDescriptionInput: TextInputEditText
-    private lateinit var mealDescriptionLayout: TextInputLayout
     private lateinit var instructionsInput: TextInputEditText
-    private lateinit var instructionsLayout: TextInputLayout
 
     private lateinit var imageHandler: ImageSelector
     private lateinit var recipe: Recipe
     private var imageChanged = false
 
+    private var originalLatitude: Double? = null
+    private var originalLongitude: Double? = null
+    private var originalGeohash: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         arguments?.let {
-            recipeId = it.getString("recipeId")
-        }
-        recipeId = arguments?.let {
-            EditRecipeFragmentArgs.fromBundle(it).recipeId
+            recipeId = EditRecipeFragmentArgs.fromBundle(it).recipeId
         }
         return inflater.inflate(R.layout.fragment_edit_recipe, container, false)
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,11 +57,8 @@ class EditRecipeFragment : Fragment() {
         progressBar = view.findViewById(R.id.progressBar)
 
         titleTextInput = view.findViewById(R.id.questionText)
-        titleTextInputLayout = view.findViewById(R.id.questionTextInputLayout)
         mealDescriptionInput = view.findViewById(R.id.mealDescriptionEditText)
-        mealDescriptionLayout = view.findViewById(R.id.mealDescriptionLayout)
         instructionsInput = view.findViewById(R.id.instructionsEditText)
-        instructionsLayout = view.findViewById(R.id.instructionsLayout)
 
         progressBar.visibility = View.GONE
 
@@ -81,7 +73,7 @@ class EditRecipeFragment : Fragment() {
         }
 
         updateButton.setOnClickListener {
-            val updatedRecipe = createUpdatedRecipeFromInput(recipe)
+            val updatedRecipe = createUpdatedRecipeFromInput()
             if (updatedRecipe != null) {
                 progressBar.visibility = View.VISIBLE
 
@@ -106,6 +98,15 @@ class EditRecipeFragment : Fragment() {
             Model.shared.getRecipeById(it) { loadedRecipe ->
                 recipe = loadedRecipe
                 updateUIWithRecipeData()
+
+                originalLatitude = recipe.latitude
+                originalLongitude = recipe.longitude
+                originalGeohash = recipe.geohash
+
+                Log.d(
+                    "EditRecipeFragment",
+                    "Original location: lat=$originalLatitude, long=$originalLongitude, geohash=$originalGeohash"
+                )
             }
         }
     }
@@ -116,7 +117,6 @@ class EditRecipeFragment : Fragment() {
             mealDescriptionInput.setText(recipe.description)
             instructionsInput.setText(recipe.instructions)
 
-            // טעינת התמונה אם קיימת
             recipe.imageUrl?.let { imageUrl ->
                 if (imageUrl.isNotEmpty()) {
                     addPhotoText.visibility = View.GONE
@@ -143,24 +143,24 @@ class EditRecipeFragment : Fragment() {
         }
     }
 
-    private fun createUpdatedRecipeFromInput(recipe: Recipe): Recipe? {
+    private fun createUpdatedRecipeFromInput(): Recipe? {
         val title = titleTextInput.text.toString().trim()
         val description = mealDescriptionInput.text.toString().trim()
         val instructions = instructionsInput.text.toString().trim()
 
         if (title.isEmpty()) {
-            Log.e("UploadRecipeFragment", "Validation failed: Title is empty")
+            Log.e("EditRecipeFragment", "Validation failed: Title is empty")
             Toast.makeText(requireContext(), "Title is required", Toast.LENGTH_SHORT).show()
             return null
         }
 
         if (instructions.isEmpty()) {
-            Log.e("UploadRecipeFragment", "Validation failed: Instructions are empty")
+            Log.e("EditRecipeFragment", "Validation failed: Instructions are empty")
             Toast.makeText(requireContext(), "Instructions are required", Toast.LENGTH_SHORT).show()
             return null
         }
 
-        val recipe = Recipe(
+        val updatedRecipe = Recipe(
             id = recipe.id,
             title = title,
             description = description,
@@ -168,10 +168,21 @@ class EditRecipeFragment : Fragment() {
             imageUrl = recipe.imageUrl,
             userId = recipe.userId,
             userName = recipe.userName,
-            timestamp = System.currentTimeMillis(),
-            lastUpdated = System.currentTimeMillis()
+            timestamp = recipe.timestamp, // Keep original timestamp
+            lastUpdated = System.currentTimeMillis(),
+
+            // Preserve location data
+            latitude = originalLatitude,
+            longitude = originalLongitude,
+            geohash = originalGeohash
         )
-        return recipe
+
+        Log.d(
+            "EditRecipeFragment",
+            "Updated Recipe: lat=${updatedRecipe.latitude}, long=${updatedRecipe.longitude}, geohash=${updatedRecipe.geohash}"
+        )
+
+        return updatedRecipe
     }
 
     private fun updateRecipe(updatedRecipe: Recipe) {
@@ -180,7 +191,7 @@ class EditRecipeFragment : Fragment() {
         Model.shared.editRecipe(updatedRecipe) {
             requireActivity().runOnUiThread {
                 progressBar.visibility = View.GONE
-                Toast.makeText(requireContext(), "Recipe Uploaded!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Recipe Updated!", Toast.LENGTH_SHORT).show()
                 findNavController().popBackStack()
             }
         }
