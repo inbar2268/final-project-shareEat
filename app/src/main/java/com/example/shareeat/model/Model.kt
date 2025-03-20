@@ -16,6 +16,7 @@ import com.example.shareeat.model.dao.AppLocalDbRepository
 import com.example.shareeat.model.firebase.FirebaseModel
 import com.example.shareeat.model.firebase.FirebaseRecipe
 import com.example.shareeat.model.firebase.FirebaseUser
+import com.google.firebase.firestore.DocumentChange
 import java.io.ByteArrayOutputStream
 import java.util.UUID
 import java.util.concurrent.Executors
@@ -144,6 +145,43 @@ class Model private constructor() {
                 }
                 Recipe.lastUpdated = currentTime
                 loadingState.postValue(LoadingState.LOADED)
+            }
+        }
+    }
+
+    fun startListeningForRecipeChanges() {
+        firebaseRecipe.addRecipeChangeListener { recipe, changeType ->
+            executor.execute {
+                try {
+                    when (changeType) {
+                        DocumentChange.Type.ADDED -> {
+                            // Check if we already have this recipe locally
+                            val existingRecipe = try {
+                                database.recipeDao().getRecipeById(recipe.id)
+                            } catch (e: Exception) {
+                                null
+                            }
+
+                            if (existingRecipe == null) {
+                                // It's truly new, add it to local DB
+                                database.recipeDao().insertAll(recipe)
+                                Log.d("Model", "New recipe ${recipe.id} added to local database")
+                            }
+                        }
+                        DocumentChange.Type.MODIFIED -> {
+                            // Update the recipe in local DB
+                            database.recipeDao().update(recipe)
+                            Log.d("Model", "Recipe ${recipe.id} updated in local database")
+                        }
+                        DocumentChange.Type.REMOVED -> {
+                            // Remove from local DB
+                            database.recipeDao().delete(recipe)
+                            Log.d("Model", "Recipe ${recipe.id} removed from local database")
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("Model", "Error processing recipe change in local DB", e)
+                }
             }
         }
     }

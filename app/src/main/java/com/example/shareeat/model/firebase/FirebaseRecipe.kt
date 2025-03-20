@@ -7,6 +7,7 @@ import com.example.shareeat.base.EmptyCallback
 import com.example.shareeat.base.RecipesCallback
 import com.example.shareeat.extensions.toFirebaseTimestamp
 import com.example.shareeat.model.Recipe
+import com.google.firebase.firestore.DocumentChange
 
 
 class FirebaseRecipe(private val firebaseModel: FirebaseModel) {
@@ -27,6 +28,36 @@ class FirebaseRecipe(private val firebaseModel: FirebaseModel) {
                 } else {
                     Log.e("FirebaseRecipe", "Error fetching recipes", task.exception)
                     callback(emptyList())
+                }
+            }
+    }
+
+    fun addRecipeChangeListener(callback: (Recipe, DocumentChange.Type) -> Unit) {
+        firebaseModel.database.collection(Constants.Collections.RECIPES)
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    Log.w("RecipeListener", "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+
+                for (dc in snapshots!!.documentChanges) {
+                    when (dc.type) {
+                        DocumentChange.Type.ADDED -> {
+                            Log.d("RecipeListener", "New recipe: ${dc.document.data}")
+                            val addedRecipe = Recipe.fromJSON(dc.document.data)
+                            callback(addedRecipe, DocumentChange.Type.ADDED)
+                        }
+                        DocumentChange.Type.MODIFIED -> {
+                            Log.d("RecipeListener", "Modified recipe: ${dc.document.data}")
+                            val modifiedRecipe = Recipe.fromJSON(dc.document.data)
+                            callback(modifiedRecipe, DocumentChange.Type.MODIFIED)
+                        }
+                        DocumentChange.Type.REMOVED -> {
+                            Log.d("RecipeListener", "Removed recipe: ${dc.document.data}")
+                            val removedRecipe = Recipe.fromJSON(dc.document.data)
+                            callback(removedRecipe, DocumentChange.Type.REMOVED)
+                        }
+                    }
                 }
             }
     }

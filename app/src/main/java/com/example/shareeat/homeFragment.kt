@@ -34,8 +34,8 @@ class homeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-
+        Model.shared.startListeningForRecipeChanges()
+        apiRecipesToRecipes()
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         binding?.recipesRecyclerView?.setHasFixedSize(true)
@@ -93,7 +93,7 @@ class homeFragment : Fragment() {
     private fun getAllRecipes() {
         binding?.progressBar?.visibility = View.VISIBLE
         viewModel.refreshAllRecipes()
-        apiRecipesToRecipes()
+
     }
 
     private fun apiRecipesToRecipes() {
