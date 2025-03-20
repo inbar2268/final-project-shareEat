@@ -9,7 +9,7 @@ interface RecipesApi {
     @GET("recipes/list")
     fun getRecipes(
         @Query("from") from: Int = 0,
-        @Query("size") size: Int = 20,
+        @Query("size") size: Int = 3,
         @Query("tags") tags: String? = "under_30_minutes"
     ): Call<Recipes>
 }

@@ -26,6 +26,11 @@ interface RecipeDao {
     @Delete
     fun delete(recipe: Recipe)
 
+    @Query("SELECT id FROM Recipe")
+    fun getAllRecipeIds(): List<String>
+
+    @Query("DELETE FROM Recipe WHERE id IN (:ids)")
+    fun deleteByIds(ids: List<String>)
 }
 
 
